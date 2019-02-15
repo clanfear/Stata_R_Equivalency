@@ -31,6 +31,7 @@ This document depicts both Stata and R approaches to data management, modeling, 
 For the first homework, we created a sample of simulated data with a specified covariance matrix and means.
 
 <div class="column-left">
+#### Stata
 ```
 matrix mean_vec=(1.0, 2.0, 3.0)
 matrix cov_mat=(1.0, .75, 1.0  \ /// 
@@ -43,6 +44,7 @@ In Stata we create a vector of means (named `m` here) and a matrix of covariance
 </div>
 
 <div class="column-right">
+#### R
 ```
 mean_vec <- c("x" = 1.0, "y" = 2.0, "z" = 3.0)
 cov_mat <- rbind(c(1.0, .75, 1.0),

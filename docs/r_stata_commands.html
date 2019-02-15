@@ -399,6 +399,7 @@ $(document).ready(function () {
 <h1>Creating Example Data</h1>
 <p>For the first homework, we created a sample of simulated data with a specified covariance matrix and means.</p>
 <div class="column-left">
+<h4 id="stata">Stata</h4>
 <pre><code>matrix mean_vec=(1.0, 2.0, 3.0)
 matrix cov_mat=(1.0, .75, 1.0  \ /// 
                 .75, 1.5, 0.0  \ ///  
@@ -408,6 +409,7 @@ corr2data x y z, n(300) mean(mean_vec) ///
 <p>In Stata we create a vector of means (named <code>m</code> here) and a matrix of covariances (named <code>vc</code>). <code>corr2data</code> then generates data with variables named <code>x</code>, <code>y</code>, and <code>z</code> whose means (<code>mean(m)</code>) and covariances (<code>cov(vc)</code>) match what we provided. We specify the sample size with <code>n()</code>.</p>
 </div>
 <div class="column-right">
+<h4 id="r">R</h4>
 <pre><code>mean_vec &lt;- c(&quot;x&quot; = 1.0, &quot;y&quot; = 2.0, &quot;z&quot; = 3.0)
 cov_mat &lt;- rbind(c(1.0, .75, 1.0),
                  c(.75, 1.5, 0.0),
@@ -422,14 +424,14 @@ example_data &lt;- MASS::mvrnorm(300, mu = mean_vec,
 <p>Modeling commands are very similar between R and Stata. The primary difference is that R argument go inside paranthesis rather than just after the name of the command as in Stata. Stata options come after a comma and are separate from formulae, but all R arguments–including formulae–are treated the same and separated by commas. Default R output is simpler than Stata: use <code>summary()</code> if you want Stata-like output. In Stata, you save model output using <code>estimates store</code> while in R you just assign the model object to a name. Note we specified which data we are using in R: R can have many data sets loaded at the same time!</p>
 </div>
 <div class="column-left">
-<h4 id="stata">Stata</h4>
+<h4 id="stata-1">Stata</h4>
 <pre><code>glm y x z, ///
    family(gaussian) link(identity)
 estimates store example_model</code></pre>
 <p>Note in the above examples, a single Stata command can be spread over multiple lines using <code>///</code>.</p>
 </div>
 <div class="column-right">
-<h4 id="r">R</h4>
+<h4 id="r-1">R</h4>
 <pre><code>example_model &lt;- glm(y ~ x + z,
                      family = gaussian(link = &quot;identity&quot;),
                      data = example_data)
@@ -441,14 +443,14 @@ summary(example_model)</code></pre>
 <p>Linear hypotheses are used to test restrictions on models (e.g. that a coefficient is zero or equal to another).</p>
 </div>
 <div class="column-left">
-<h4 id="stata-1">Stata</h4>
+<h4 id="stata-2">Stata</h4>
 <pre><code>test x=0
 test x=z
 test x=z=0</code></pre>
 <p>Like most postestimation commands in Stata, linear hypotheses (with <code>test</code>) must be conducted immediately after running the model of interest.</p>
 </div>
 <div class="column-right">
-<h4 id="r-1">R</h4>
+<h4 id="r-2">R</h4>
 <pre><code>car::linearHypothesis(example_model, &quot;x=0&quot;)
 car::linearHypothesis(example_model, &quot;x=z&quot;)
 car::linearHypothesis(example_model, c(&quot;x=0&quot;, &quot;z=0&quot;))</code></pre>
@@ -459,13 +461,13 @@ car::linearHypothesis(example_model, c(&quot;x=0&quot;, &quot;z=0&quot;))</code>
 <p>We often want to obtain residuals to check model fit or produce plots where we have controlled for covariates.</p>
 </div>
 <div class="column-left">
-<h4 id="stata-2">Stata</h4>
+<h4 id="stata-3">Stata</h4>
 <pre><code>predict residual_y_xz, deviance // GLM uses deviance 
 predict residual_y_xz, residual // OLS uses residual</code></pre>
 <p>Obtaining residuals is a postestimation command in Stata, which must be run immediately after a model.</p>
 </div>
 <div class="column-right">
-<h4 id="r-2">R</h4>
+<h4 id="r-3">R</h4>
 <pre><code>residual_y_xz &lt;- residuals(example_model)
 example_data$residual_y_xz &lt;- residuals(example_model)</code></pre>
 <p>In R, we run the command on a saved model object. If you want to save the residuals to the original data, you can just assign them as a column.</p>
@@ -475,12 +477,12 @@ example_data$residual_y_xz &lt;- residuals(example_model)</code></pre>
 <p>R and Stata are very different with regard to storing, accessing, and modifying data and variables. Stata only loads one data set at a time. R stores all object including data as objects and can have an arbitrary number loaded at once.</p>
 </div>
 <div class="column-left">
-<h4 id="stata-3">Stata</h4>
+<h4 id="stata-4">Stata</h4>
 <p>In Stata, we just use <code>generate</code> and the variable is created in our current data.</p>
 <pre><code>generate x_z = x * z</code></pre>
 </div>
 <div class="column-right">
-<h4 id="r-3">R</h4>
+<h4 id="r-4">R</h4>
 <p>In R, we assign variables inside the data we want to use. We can do this with base R:</p>
 <pre><code>crime_data$x_z &lt;- crime_data$x * crime_data$z</code></pre>
 <p>Or we can use the <code>dplyr</code> package:</p>
