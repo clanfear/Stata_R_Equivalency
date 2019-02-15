@@ -1,0 +1,164 @@
+---
+title: "R and Stata Equivalencies"
+author: "Chuck Lanfear"
+date: "February 14, 2019"
+output: html_document
+---
+
+<style>
+.column-left{
+  float: left;
+  width: 50%;
+  text-align: left;
+}
+.column-right{
+  float: right;
+  width: 50%;
+  text-align: left;
+}
+.one-column{
+  float: right;
+  width: 100%;
+  text-align: left;
+}
+</style>
+
+
+This document depicts both Stata and R approaches to data management, modeling, and plotting seen in SOC505. They are presented side-by-side to make it easier to move between platforms. It also demonstrates that Stata and R are quite similar in syntax in many cases.
+
+# Creating Example Data
+
+For the first homework, we created a sample of simulated data with a specified covariance matrix and means.
+
+<div class="column-left">
+```
+matrix mean_vec=(1.0, 2.0, 3.0)
+matrix cov_mat=(1.0, .75, 1.0  \\ /// 
+           .75, 1.5, 0.0  \\ ///  
+           1.0, 0.0, 2.0)            
+corr2data x y z, n(300) mean(mean_vec) ///
+   cov(cov_mat) cstorage(full) seed(341305)
+```
+In Stata we create a vector of means (named `m` here) and a matrix of covariances (named `vc`). `corr2data` then generates data with variables named `x`, `y`, and `z` whose means (`mean(m)`) and covariances (`cov(vc)`) match what we provided. We specify the sample size with `n()`.
+</div>
+
+<div class="column-right">
+```
+mean_vec <- c("x" = 1.0, "y" = 2.0, "z" = 3.0)
+cov_mat <- rbind(c(1.0, .75, 1.0),
+                 c(.75, 1.5, 0.0),
+                 c(1.0, 0.0, 2.0))
+example_data <- MASS::mvrnorm(300, mu = mean_vec, 
+                              Sigma = cov_mat,
+                              empirical = TRUE)
+```
+In R, the operation is similar to Stata. We provide a vector of means (`mean_vec`) and a covariance matrix (`cov_mat`). Note we create vectors with `c()` and combined them into a matrix by rows with `rbind()` (row bind). `mvrnorm()` in the `MASS` has number of observations (`300`) as its first argument. `::` allows us to use a function from a package without loading the whole package.
+</div>
+
+# Models
+
+Modeling commands are very similar between R and Stata. The primary difference is that R argument go inside paranthesis rather than just after the name of the command as in Stata. Stata options come after a comma and are separate from formulae, but all R arguments--including formulae--are treated the same and separated by commas. Default R output is simpler than Stata: use `summary()` if you want Stata-like output. In Stata, you save model output using `estimates store` while in R you just assign the model object to a name. Note we specified which data we are using in R: R can have many data sets loaded at the same time!
+
+<div class="column-left">
+## Stata
+
+```
+glm y x z, ///
+   family(gaussian) link(identity)
+estimates store example_model
+```
+Note in the above examples, a single Stata command can be spread over multiple lines using `///`.
+</div>
+
+<div class="column-left">
+## R
+
+```
+example_model <- glm(y ~ x + z,
+                     family = gaussian(link = "identity"),
+                     data = example_data)
+summary(example_model)
+```
+ In R, all commands can span multiple lines so long as each line (other than the last) ends in an operator (e.g. `,` as above, but also `+` like in `ggplot2` calls).
+</div>
+
+
+
+# Linear Hypotheses
+
+Linear hypotheses are used to test restrictions on models (e.g. that a coefficient is zero or equal to another).
+
+<div class="column-left">
+## Stata
+
+```
+test x=0
+test x=z
+test x=z=0
+```
+Like most postestimation commands in Stata, linear hypotheses (with `test`) must be conducted immediately after running the model of interest. 
+</div>
+
+<div class="column-left">
+## R
+
+```
+car::linearHypothesis(example_model, "x=0")
+car::linearHypothesis(example_model, "x=z")
+car::linearHypothesis(example_model, c("x=0",
+                                       "z=0"))
+```
+In R, they must be run using a saved model object (like `example_model` created above). In R, the `linearHypothesis()` function is found in the `car` package. You can obtain this package using `install.packages("car")`. You can then either use `library(car)` to load the package or run `linearHypothesis()` from car directly--without loading the package--using `car::linearHypothesis()` as below.
+</div>
+
+# Residuals
+
+We often want to obtain residuals to check model fit or produce plots where we have controlled for covariates.  
+
+<div class="column-left">
+## Stata
+
+```
+predict residual_y_xz, deviance // GLM uses deviance 
+predict residual_y_xz, residual // OLS uses residual
+```
+Obtaining residuals is a postestimation command in Stata, which must be run immediately after a model.
+</div>
+
+<div class="column-left">
+## R
+
+```
+residual_y_xz <- residuals(example_model)
+example_data$residual_y_xz <- residuals(example_model)
+```
+In R, we run the command on a saved model object. If you want to save the residuals to the original data, you can just assign them as a column.
+</div>
+
+# Creating Variables
+
+R and Stata are very different with regard to storing, accessing, and modifying data and variables. Stata only loads one data set at a time. R stores all object including data as objects and can have an arbitrary number loaded at once.
+
+<div class="column-left">
+## Stata
+In Stata, we just use `generate` and the variable is created in our current data.
+```
+generate x_z = x * z
+```
+</div>
+
+<div class="column-left">
+## R
+
+In R, we assign variables inside the data we want to use. We can do this with base R:
+```
+crime_data$x_z <- crime_data$x * crime_data$z
+```
+Or we can use the `dplyr` package:
+```
+crime_data <- crime_data %>% mutate(x_z = x * z)
+```
+
+</div>
+
+Buttpoop
