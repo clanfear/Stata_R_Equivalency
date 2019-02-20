@@ -371,7 +371,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">R and Stata Equivalencies</h1>
 <h4 class="author"><em>Chuck Lanfear</em></h4>
-<h4 class="date"><em>Updated 5:13 PM, February 14, 2019</em></h4>
+<h4 class="date"><em>Updated 4:47 PM, February 19, 2019</em></h4>
 
 </div>
 
@@ -483,12 +483,65 @@ example_data$residual_y_xz &lt;- residuals(example_model)</code></pre>
 <div class="column-right">
 <h4 id="r-4">R</h4>
 <p>In R, we assign variables inside the data we want to use. We can do this with base R:</p>
-<pre><code>crime_data$x_z &lt;- crime_data$x * crime_data$z</code></pre>
+<pre><code>example_data$x_z &lt;- example_data$x * crime_data$z</code></pre>
 <p>Or we can use the <code>dplyr</code> package:</p>
-<pre><code>crime_data &lt;- crime_data %&gt;% mutate(x_z = x * z)</code></pre>
+<pre><code>example_data &lt;- example_data %&gt;% mutate(x_z = x * z)</code></pre>
 </div>
 <div class="column-center">
-
+<h2 id="scatterplots">Scatterplots</h2>
+</div>
+<div class="column-left">
+<h4 id="stata-5">Stata</h4>
+<pre><code>scatter y x</code></pre>
+</div>
+<div class="column-right">
+<h4 id="r-5">R</h4>
+<p>Base R scatterplots use <code>plot()</code> and can take either a formula or <code>x</code> and <code>y</code> arguments:</p>
+<pre><code>plot(example_data$y ~ example_data$x)
+plot(example_data$x, example_data$y, data=example_data)</code></pre>
+<p><code>gplot2</code> uses <code>geom_point()</code>:</p>
+<pre><code>ggplot(example_data, aes(x, y)) + 
+  geom_point()</code></pre>
+</div>
+<div class="column-center">
+<h2 id="fit-lines-on-scatterplots">Fit Lines on Scatterplots</h2>
+<p>Often we want to plot regression lines on our scatterplots.</p>
+</div>
+<div class="column-left">
+<h4 id="stata-6">Stata</h4>
+<p>We can just draw both the scatter and a linear fit (<code>lfit</code>) at the same time:</p>
+<pre><code>graph twoway ((scatter y x) || (lfit y x))</code></pre>
+</div>
+<div class="column-right">
+<h4 id="r-6">R</h4>
+<p>In base R, we draw the scatterplot and add a linear line (<code>abline()</code>):</p>
+<pre><code>plot(example_data$y ~ example_data$x)
+abline(reg=glm(y ~ x, data = example_data))</code></pre>
+<p><code>gplot2</code> adds a line with <code>geom_smooth()</code>:</p>
+<pre><code>ggplot(example_data, aes(x, y)) + 
+  geom_point() + 
+  geom_smooth(method=&quot;glm&quot;, formula= y ~ x)</code></pre>
+<p>By default <code>geom_smooth()</code> includes a 95% confidence interval around the line.</p>
+</div>
+<div class="column-center">
+<h2 id="quadratic-lines-on-scatterplots">Quadratic Lines on Scatterplots</h2>
+<p>We may want to put a nonlinear fit line on our plot. This is easy in both Stata and R.</p>
+</div>
+<div class="column-left">
+<h4 id="stata-7">Stata</h4>
+<p><code>qfit</code> generates a quadratic fit line.</p>
+<pre><code>graph twoway ((scatter y x) || (qfit y x))</code></pre>
+</div>
+<div class="column-right">
+<h4 id="r-7">R</h4>
+<p>Quadratic fits are slightly awkward in base R:</p>
+<pre><code>plot(example_data$y ~ example_data$x)
+curve(predict(glm(y~x, data=example_data), 
+  newdata=data.frame(wt=x)), add=T)</code></pre>
+<p>They use the same syntax as linear fits in <code>gplot2</code>:</p>
+<pre><code>ggplot(example_data, aes(x, y)) + 
+  geom_point() + 
+  geom_smooth(method=&quot;glm&quot;, formula= y ~ poly(x,2))</code></pre>
 </div>
 </div>
 

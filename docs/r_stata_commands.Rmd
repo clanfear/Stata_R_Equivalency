@@ -159,14 +159,109 @@ generate x_z = x * z
 
 In R, we assign variables inside the data we want to use. We can do this with base R:
 ```
-crime_data$x_z <- crime_data$x * crime_data$z
+example_data$x_z <- example_data$x * crime_data$z
 ```
 Or we can use the `dplyr` package:
 ```
-crime_data <- crime_data %>% mutate(x_z = x * z)
+example_data <- example_data %>% mutate(x_z = x * z)
+```
+</div>
+
+<div class="column-center">
+## Scatterplots
+
+</div>
+
+<div class="column-left">
+#### Stata
+
+```
+scatter y x
 ```
 
 </div>
+<div class="column-right">
+#### R
+
+Base R scatterplots use `plot()` and can take either a formula or `x` and `y` arguments:
+```
+plot(example_data$y ~ example_data$x)
+plot(example_data$x, example_data$y, data=example_data)
+```
+
+`gplot2` uses `geom_point()`:
+
+```
+ggplot(example_data, aes(x, y)) + 
+  geom_point()
+```
+</div>
+
 <div class="column-center">
+## Fit Lines on Scatterplots
+
+Often we want to plot regression lines on our scatterplots.
+</div>
+
+<div class="column-left">
+#### Stata
+
+We can just draw both the scatter and a linear fit (`lfit`) at the same time:
+```
+graph twoway ((scatter y x) || (lfit y x))
+```
 
 </div>
+<div class="column-right">
+#### R
+
+In base R, we draw the scatterplot and add a linear line (`abline()`):
+```
+plot(example_data$y ~ example_data$x)
+abline(reg=glm(y ~ x, data = example_data))
+```
+
+`gplot2` adds a line with `geom_smooth()`:
+```
+ggplot(example_data, aes(x, y)) + 
+  geom_point() + 
+  geom_smooth(method="glm", formula= y ~ x)
+```
+
+By default `geom_smooth()` includes a 95% confidence interval around the line.
+</div>
+
+<div class="column-center">
+## Quadratic Lines on Scatterplots
+
+We may want to put a nonlinear fit line on our plot. This is easy in both Stata and R.
+</div>
+
+<div class="column-left">
+#### Stata
+
+`qfit` generates a quadratic fit line.
+
+```
+graph twoway ((scatter y x) || (qfit y x))
+```
+
+</div>
+<div class="column-right">
+#### R
+
+Quadratic fits are slightly awkward in base R:
+```
+plot(example_data$y ~ example_data$x)
+curve(predict(glm(y~x, data=example_data), 
+  newdata=data.frame(wt=x)), add=T)
+```
+
+They use the same syntax as linear fits in `gplot2`:
+```
+ggplot(example_data, aes(x, y)) + 
+  geom_point() + 
+  geom_smooth(method="glm", formula= y ~ poly(x,2))
+```
+</div>
+
