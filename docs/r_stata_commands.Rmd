@@ -26,7 +26,7 @@ output: html_document
 
 This document depicts both Stata and R approaches to data management, modeling, and plotting seen in SOC505. They are presented side-by-side to make it easier to move between platforms. It also demonstrates that Stata and R are quite similar in syntax in many cases.
 
-# Creating Example Data
+## Creating Example Data
 
 For the first homework, we created a sample of simulated data with a specified covariance matrix and means.
 
@@ -58,7 +58,7 @@ In R, the operation is similar to Stata. We provide a vector of means (`mean_vec
 </div>
 
 <div class="column-center">
-# Models
+## Models
 
 Modeling commands are very similar between R and Stata. The primary difference is that R argument go inside paranthesis rather than just after the name of the command as in Stata. Stata options come after a comma and are separate from formulae, but all R arguments--including formulae--are treated the same and separated by commas. Default R output is simpler than Stata: use `summary()` if you want Stata-like output. In Stata, you save model output using `estimates store` while in R you just assign the model object to a name. Note we specified which data we are using in R: R can have many data sets loaded at the same time!
 </div>
@@ -87,7 +87,7 @@ summary(example_model)
 </div>
 
 <div class="column-center">
-# Linear Hypotheses
+## Linear Hypotheses
 
 Linear hypotheses are used to test restrictions on models (e.g. that a coefficient is zero or equal to another).
 </div>
@@ -115,7 +115,7 @@ In R, they must be run using a saved model object (like `example_model` created 
 </div>
 
 <div class="column-center">
-# Residuals
+## Residuals
 
 We often want to obtain residuals to check model fit or produce plots where we have controlled for covariates.  
 </div>
@@ -141,7 +141,7 @@ In R, we run the command on a saved model object. If you want to save the residu
 </div>
 
 <div class="column-center">
-# Creating Variables
+## Creating Variables
 
 R and Stata are very different with regard to storing, accessing, and modifying data and variables. Stata only loads one data set at a time. R stores all object including data as objects and can have an arbitrary number loaded at once.
 </div>
