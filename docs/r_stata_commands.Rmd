@@ -50,9 +50,10 @@ mean_vec <- c("x" = 1.0, "y" = 2.0, "z" = 3.0)
 cov_mat <- rbind(c(1.0, .75, 1.0),
                  c(.75, 1.5, 0.0),
                  c(1.0, 0.0, 2.0))
-example_data <- data.frame(MASS::mvrnorm(300, mu = mean_vec, 
-                              Sigma = cov_mat,
-                              empirical = TRUE))
+example_data <- data.frame(MASS::mvrnorm(300,
+                            mu = mean_vec, 
+                            Sigma = cov_mat,
+                            empirical = TRUE))
 ```
 In R, the operation is similar to Stata. We provide a vector of means (`mean_vec`) and a covariance matrix (`cov_mat`). Note we create vectors with `c()` and combined them into a matrix by rows with `rbind()` (row bind). `mvrnorm()` in the `MASS` has number of observations (`300`) as its first argument. `::` allows us to use a function from a package without loading the whole package.
 </div>
