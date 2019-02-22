@@ -5,15 +5,15 @@
     "dirty" : false,
     "encoding" : "UTF-8",
     "folds" : "",
-    "hash" : "594448821",
+    "hash" : "0",
     "id" : "395FC707",
-    "lastKnownWriteTime" : 1550795518,
-    "last_content_update" : 1550795518500,
+    "lastKnownWriteTime" : 1550795669,
+    "last_content_update" : 1550795669041,
     "path" : "C:/Users/cclan/OneDrive/GitHub/Stata_R_Equivalency/docs/r_stata_commands.Rmd",
     "project_path" : "docs/r_stata_commands.Rmd",
     "properties" : {
-        "cursorPosition" : "235,0",
-        "scrollLine" : "218"
+        "cursorPosition" : "26,368",
+        "scrollLine" : "16"
     },
     "relative_order" : 1,
     "source_on_save" : false,

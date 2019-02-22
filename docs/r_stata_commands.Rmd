@@ -24,7 +24,7 @@ output: html_document
 </style>
 
 
-This document depicts both Stata and R approaches to data management, modeling, and plotting seen in SOC505. They are presented side-by-side to make it easier to move between platforms. It also demonstrates that Stata and R are quite similar in syntax in many cases.
+This document depicts both Stata and R approaches to data management, modeling, and plotting seen in SOC505. They are presented side-by-side to make it easier to move between platforms. It also demonstrates that Stata and R are quite similar in syntax in many cases. R often takes more code to do common tasks than Stata, but can do many things that are not possible in Stata. Both are excellent platforms for quantitative research, though Stata is more common in economics and R is more common in statistics and data science.
 
 ## Creating Example Data
 
