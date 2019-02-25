@@ -59,7 +59,7 @@ In R, the operation is similar to Stata. We provide a vector of means (`mean_vec
 </div>
 
 <div class="column-center">
-## Models
+## Linear Models
 
 Modeling commands are very similar between R and Stata. The primary difference is that R argument go inside paranthesis rather than just after the name of the command as in Stata. Stata options come after a comma and are separate from formulae, but all R arguments--including formulae--are treated the same and separated by commas. Default R output is simpler than Stata: use `summary()` if you want Stata-like output. In Stata, you save model output using `estimates store` while in R you just assign the model object to a name. Note we specified which data we are using in R: R can have many data sets loaded at the same time!
 </div>
@@ -88,6 +88,9 @@ summary(example_model)
 </div>
 
 <div class="column-center">
+
+
+
 ## Linear Hypotheses
 
 Linear hypotheses are used to test restrictions on models (e.g. that a coefficient is zero or equal to another).
@@ -356,3 +359,35 @@ ggplot(example_data, aes(x, y)) +
 ```
 </div>
 
+<div class="column-center">
+## Logit Models
+
+Logistic regression is a generalized linear model for binomially distributed data which uses a logit function link.
+
+</div>
+
+<div class="column-left">
+#### Stata
+
+Stata offers multiple commands for running a logistic regression. `glm` and `logit` report log-odds coefficients while `logistic` reports odds ratios. `logit` is just a shortcut for `glm` to save typing out the family and link.
+```
+glm x_d1 y z, family(binomial) link(logit)
+logit x_d1 y z
+logistic x_d1 y z
+
+```
+</div>
+
+<div class="column-right">
+#### R
+
+R uses `glm()` for logistic regression.
+```
+example_model2 <- 
+  glm(x_d1 ~ y + z,
+      family = binomial(link = "logit"),
+      data = example_data)
+summary(example_model2)
+```
+
+</div>

@@ -371,7 +371,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">R and Stata Equivalencies</h1>
 <h4 class="author"><em>Chuck Lanfear</em></h4>
-<h4 class="date"><em>Updated 4:50 PM, February 21, 2019</em></h4>
+<h4 class="date"><em>Updated 7:53 PM, February 24, 2019</em></h4>
 
 </div>
 
@@ -420,7 +420,7 @@ example_data &lt;- data.frame(MASS::mvrnorm(300,
 <p>In R, the operation is similar to Stata. We provide a vector of means (<code>mean_vec</code>) and a covariance matrix (<code>cov_mat</code>). Note we create vectors with <code>c()</code> and combined them into a matrix by rows with <code>rbind()</code> (row bind). <code>mvrnorm()</code> in the <code>MASS</code> has number of observations (<code>300</code>) as its first argument. <code>::</code> allows us to use a function from a package without loading the whole package.</p>
 </div>
 <div class="column-center">
-<h2 id="models">Models</h2>
+<h2 id="linear-models">Linear Models</h2>
 <p>Modeling commands are very similar between R and Stata. The primary difference is that R argument go inside paranthesis rather than just after the name of the command as in Stata. Stata options come after a comma and are separate from formulae, but all R arguments–including formulae–are treated the same and separated by commas. Default R output is simpler than Stata: use <code>summary()</code> if you want Stata-like output. In Stata, you save model output using <code>estimates store</code> while in R you just assign the model object to a name. Note we specified which data we are using in R: R can have many data sets loaded at the same time!</p>
 </div>
 <div class="column-left">
@@ -436,7 +436,7 @@ estimates store example_model</code></pre>
                      family = gaussian(link = &quot;identity&quot;),
                      data = example_data)
 summary(example_model)</code></pre>
-<p>In R, all commands can span multiple lines so long as each line (other than the last) ends in an operator (e.g. <code>,</code> as above, but also <code>+</code> like in <code>ggplot2</code> calls).</p>
+<p>In R, all commands can span multiple lines so long as each line (other than the last) ends in an operator (e.g. <code>,</code> as above, but also <code>+</code> like in <code>ggplot2</code> calls).</p>
 </div>
 <div class="column-center">
 <h2 id="linear-hypotheses">Linear Hypotheses</h2>
@@ -605,6 +605,27 @@ curve(predict(glm(y~x, data=example_data),
 <pre><code>ggplot(example_data, aes(x, y)) + 
   geom_point() + 
   geom_smooth(method=&quot;glm&quot;, formula= y ~ poly(x,2))</code></pre>
+</div>
+<div class="column-center">
+<h2 id="logit-models">Logit Models</h2>
+<p>Logistic regression is a generalized linear model for binomially distributed data which uses a logit function link.</p>
+</div>
+<div class="column-left">
+<h4 id="stata-10">Stata</h4>
+<p>Stata offers multiple commands for running a logistic regression. <code>glm</code> and <code>logit</code> report log-odds coefficients while <code>logistic</code> reports odds ratios. <code>logit</code> is just a shortcut for <code>glm</code> to save typing out the family and link.</p>
+<pre><code>glm x_d1 y z, family(binomial) link(logit)
+logit x_d1 y z
+logistic x_d1 y z
+</code></pre>
+</div>
+<div class="column-right">
+<h4 id="r-10">R</h4>
+<p>R uses <code>glm()</code> for logistic regression.</p>
+<pre><code>example_model2 &lt;- 
+  glm(x_d1 ~ y + z,
+      family = binomial(link = &quot;logit&quot;),
+      data = example_data)
+summary(example_model2)</code></pre>
 </div>
 </div>
 
