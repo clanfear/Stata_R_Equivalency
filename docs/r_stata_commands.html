@@ -371,7 +371,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">R and Stata Equivalencies</h1>
 <h4 class="author"><em>Chuck Lanfear</em></h4>
-<h4 class="date"><em>Updated 4:01 PM, February 25, 2019</em></h4>
+<h4 class="date"><em>Updated 4:40 PM, February 25, 2019</em></h4>
 
 </div>
 
@@ -394,11 +394,28 @@ $(document).ready(function () {
 }
 </style>
 <p>This document depicts both Stata and R approaches to data management, modeling, and plotting seen in SOC505. They are presented side-by-side to make it easier to move between platforms. It also demonstrates that Stata and R are quite similar in syntax in many cases. R often takes more code to do common tasks than Stata, but can do many things that are not possible in Stata. Both are excellent platforms for quantitative research, though Stata is more common in economics and R is more common in statistics and data science.</p>
-<div id="creating-example-data" class="section level2">
-<h2>Creating Example Data</h2>
-<p>For the first homework, we created a sample of simulated data with a specified covariance matrix and means.</p>
+<div class="column-center">
+<h2 id="loading-data">Loading Data</h2>
+<p>Provided a Stata data set (<code>.dta</code> file), we can read it into either Stata or R.</p>
+</div>
 <div class="column-left">
 <h4 id="stata">Stata</h4>
+<p>Stata can only load one data set at a time, so it does not get assigned to an object.</p>
+<pre><code>use example_data.dta</code></pre>
+<p>This will load from Stata’s current working directory. You can change the working directory using <code>cd &quot;path&quot;</code> (e.g. <code>cd &quot;C:\Users\me\documents&quot;</code>).</p>
+</div>
+<div class="column-right">
+<h4 id="r">R</h4>
+<p>R can load an arbitrary number of data sets at once, so they must each be assigned a name. I recommend <code>read_dta()</code> in the <code>haven</code> package–part of the <code>tidyverse</code>–for loading Stata files because it preserves Stata labels.</p>
+<pre><code>example_data &lt;- haven::read_dta(&quot;example_data.dta&quot;)</code></pre>
+<p>R will load this file from your current working directory. If using a .Rmd file, this will default to the directory the .Rmd file is in. You can change the working directory with <code>setwd(&quot;path&quot;)</code> (e.g. <code>setwd(&quot;C:\Users\me\documents&quot;)</code>).</p>
+</div>
+<div class="column-center">
+<h2 id="creating-example-data">Creating Example Data</h2>
+<p>For the first homework, we created a sample of simulated data with a specified covariance matrix and means.</p>
+</div>
+<div class="column-left">
+<h4 id="stata-1">Stata</h4>
 <pre><code>matrix mean_vec=(1.0, 2.0, 3.0)
 matrix cov_mat=(1.0, .75, 1.0  \ /// 
                 .75, 1.5, 0.0  \ ///  
@@ -408,7 +425,7 @@ corr2data x y z, n(300) mean(mean_vec) ///
 <p>In Stata we create a vector of means (named <code>m</code> here) and a matrix of covariances (named <code>vc</code>). <code>corr2data</code> then generates data with variables named <code>x</code>, <code>y</code>, and <code>z</code> whose means (<code>mean(m)</code>) and covariances (<code>cov(vc)</code>) match what we provided. We specify the sample size with <code>n()</code>.</p>
 </div>
 <div class="column-right">
-<h4 id="r">R</h4>
+<h4 id="r-1">R</h4>
 <pre><code>mean_vec &lt;- c(&quot;x&quot; = 1.0, &quot;y&quot; = 2.0, &quot;z&quot; = 3.0)
 cov_mat &lt;- rbind(c(1.0, .75, 1.0),
                  c(.75, 1.5, 0.0),
@@ -424,7 +441,7 @@ example_data &lt;- data.frame(MASS::mvrnorm(300,
 <p>R and Stata are very different with regard to storing, accessing, and modifying data and variables. Stata only loads one data set at a time. R stores all object including data as objects and can have an arbitrary number loaded at once. Below I create an interaction term between <code>x</code> and <code>z</code> and a discrete version of <code>x</code>.</p>
 </div>
 <div class="column-left">
-<h4 id="stata-1">Stata</h4>
+<h4 id="stata-2">Stata</h4>
 <p>In Stata, we just use <code>generate</code> and the variable is created in our current data.</p>
 <pre><code>generate x_z = x * z
 generate x_disc = 0
@@ -433,7 +450,7 @@ replace x_disc = 2 if x &gt; .5 &amp; x &lt; 1.5
 replace x_disc = 3 if x &gt; 1.5</code></pre>
 </div>
 <div class="column-right">
-<h4 id="r-1">R</h4>
+<h4 id="r-2">R</h4>
 <p>In R, we assign variables inside the data we want to use. We can do this with base R:</p>
 <pre><code>example_data$x_z &lt;- example_data$x * crime_data$z
 example_data$x_disc &lt;- 
@@ -457,14 +474,14 @@ example_data &lt;- example_data %&gt;%
 <p>Modeling commands are very similar between R and Stata. The primary difference is that R argument go inside paranthesis rather than just after the name of the command as in Stata. Stata options come after a comma and are separate from formulae, but all R arguments–including formulae–are treated the same and separated by commas. Default R output is simpler than Stata: use <code>summary()</code> if you want Stata-like output. In Stata, you save model output using <code>estimates store</code> while in R you just assign the model object to a name. Note we specified which data we are using in R: R can have many data sets loaded at the same time!</p>
 </div>
 <div class="column-left">
-<h4 id="stata-2">Stata</h4>
+<h4 id="stata-3">Stata</h4>
 <pre><code>glm y x z, ///
    family(gaussian) link(identity)
 estimates store example_model</code></pre>
 <p>Note in the above examples, a single Stata command can be spread over multiple lines using <code>///</code>.</p>
 </div>
 <div class="column-right">
-<h4 id="r-2">R</h4>
+<h4 id="r-3">R</h4>
 <pre><code>example_model &lt;- glm(y ~ x + z,
                      family = gaussian(link = &quot;identity&quot;),
                      data = example_data)
@@ -476,14 +493,14 @@ summary(example_model)</code></pre>
 <p>Linear hypotheses are used to test restrictions on models (e.g. that a coefficient is zero or equal to another).</p>
 </div>
 <div class="column-left">
-<h4 id="stata-3">Stata</h4>
+<h4 id="stata-4">Stata</h4>
 <pre><code>test x=0
 test x=z
 test x=z=0</code></pre>
 <p>Like most postestimation commands in Stata, linear hypotheses (with <code>test</code>) must be conducted immediately after running the model of interest.</p>
 </div>
 <div class="column-right">
-<h4 id="r-3">R</h4>
+<h4 id="r-4">R</h4>
 <pre><code>car::linearHypothesis(example_model, &quot;x=0&quot;)
 car::linearHypothesis(example_model, &quot;x=z&quot;)
 car::linearHypothesis(example_model, c(&quot;x=0&quot;, &quot;z=0&quot;))</code></pre>
@@ -494,13 +511,13 @@ car::linearHypothesis(example_model, c(&quot;x=0&quot;, &quot;z=0&quot;))</code>
 <p>We often want to obtain residuals to check model fit or produce plots where we have controlled for covariates.</p>
 </div>
 <div class="column-left">
-<h4 id="stata-4">Stata</h4>
+<h4 id="stata-5">Stata</h4>
 <pre><code>predict residual_y_xz, deviance // GLM uses deviance 
 predict residual_y_xz, residual // OLS uses residual</code></pre>
 <p>Obtaining residuals is a postestimation command in Stata, which must be run immediately after a model.</p>
 </div>
 <div class="column-right">
-<h4 id="r-4">R</h4>
+<h4 id="r-5">R</h4>
 <pre><code>residual_y_xz &lt;- residuals(example_model)
 example_data$residual_y_xz &lt;- residuals(example_model)</code></pre>
 <p>In R, we run the command on a saved model object. If you want to save the residuals to the original data, you can just assign them as a column.</p>
@@ -512,12 +529,12 @@ example_data$residual_y_xz &lt;- residuals(example_model)</code></pre>
 <p>We can specify dummies directly in the formula in either Stat or R.</p>
 </div>
 <div class="column-left">
-<h4 id="stata-5">Stata</h4>
+<h4 id="stata-6">Stata</h4>
 <p>In Stata, we just use append our categorical variable with <code>i.</code>:</p>
 <pre><code>glm y i.x_disc </code></pre>
 </div>
 <div class="column-right">
-<h4 id="r-5">R</h4>
+<h4 id="r-6">R</h4>
 <p>In R, variables stored as factors automatically turn into dummies:</p>
 <pre><code>glm(y ~ factor(x_disc), data=example_data)</code></pre>
 <p>Note if you assigned it as a factor when you created or loaded the data, you don’t need to specify it as a factor in the formula.</p>
@@ -527,7 +544,7 @@ example_data$residual_y_xz &lt;- residuals(example_model)</code></pre>
 <p>We can also manually create dummies in the actual data (Jerry’s preference)</p>
 </div>
 <div class="column-left">
-<h4 id="stata-6">Stata</h4>
+<h4 id="stata-7">Stata</h4>
 <p>We can either generate each dummy individually or use a <code>tabulate</code> shortcut.</p>
 <pre><code>generate x_d1 = 0
 replace x_d1 = 1 if x_disc==1
@@ -539,7 +556,7 @@ replace x_d3 = 3 if x_disc==3
 tabulate x_disc, generate(x_d)</code></pre>
 </div>
 <div class="column-right">
-<h4 id="r-6">R</h4>
+<h4 id="r-7">R</h4>
 <p>Base R:</p>
 <pre><code>example_data$x_d1 &lt;- ifelse(example_data$x_disc==1, 1, 0)
 example_data$x_d2 &lt;- ifelse(example_data$x_disc==2, 1, 0)
@@ -554,12 +571,12 @@ example_data$x_d3 &lt;- ifelse(example_data$x_disc==3, 1, 0)</code></pre>
 <h2 id="tables">Tables</h2>
 </div>
 <div class="column-left">
-<h4 id="stata-7">Stata</h4>
+<h4 id="stata-8">Stata</h4>
 <pre><code>tab x_disc
 tab x_d1 x_d2</code></pre>
 </div>
 <div class="column-right">
-<h4 id="r-7">R</h4>
+<h4 id="r-8">R</h4>
 <p>Base R:</p>
 <pre><code>table(example_data$x_disc)
 table(example_data$x_d1, example_data$x_d2)
@@ -573,7 +590,7 @@ example_data %&gt;% count(x_d1, x_d2)</code></pre>
 <p>Logistic regression is a generalized linear model for binomially distributed data which uses a logit function link.</p>
 </div>
 <div class="column-left">
-<h4 id="stata-8">Stata</h4>
+<h4 id="stata-9">Stata</h4>
 <p>Stata offers multiple commands for running a logistic regression. <code>glm</code> and <code>logit</code> report log-odds coefficients while <code>logistic</code> reports odds ratios. <code>logit</code> is just a shortcut for <code>glm</code> to save typing out the family and link.</p>
 <pre><code>glm x_d1 y z, family(binomial) link(logit)
 logit x_d1 y z
@@ -581,7 +598,7 @@ logistic x_d1 y z
 </code></pre>
 </div>
 <div class="column-right">
-<h4 id="r-8">R</h4>
+<h4 id="r-9">R</h4>
 <p>R uses <code>glm()</code> for logistic regression.</p>
 <pre><code>example_model2 &lt;- 
   glm(x_d1 ~ y + z,
@@ -594,11 +611,11 @@ summary(example_model2)</code></pre>
 <h2 id="scatterplots">Scatterplots</h2>
 </div>
 <div class="column-left">
-<h4 id="stata-9">Stata</h4>
+<h4 id="stata-10">Stata</h4>
 <pre><code>scatter y x</code></pre>
 </div>
 <div class="column-right">
-<h4 id="r-9">R</h4>
+<h4 id="r-10">R</h4>
 <p>Base R scatterplots use <code>plot()</code> and can take either a formula or <code>x</code> and <code>y</code> arguments:</p>
 <pre><code>plot(example_data$y ~ example_data$x)
 plot(example_data$x, example_data$y, data=example_data)</code></pre>
@@ -611,12 +628,12 @@ plot(example_data$x, example_data$y, data=example_data)</code></pre>
 <p>Often we want to plot regression lines on our scatterplots.</p>
 </div>
 <div class="column-left">
-<h4 id="stata-10">Stata</h4>
+<h4 id="stata-11">Stata</h4>
 <p>We can just draw both the scatter and a linear fit (<code>lfit</code>) at the same time:</p>
 <pre><code>graph twoway ((scatter y x) || (lfit y x))</code></pre>
 </div>
 <div class="column-right">
-<h4 id="r-10">R</h4>
+<h4 id="r-11">R</h4>
 <p>In base R, we draw the scatterplot and add a linear line (<code>abline()</code>):</p>
 <pre><code>plot(example_data$y ~ example_data$x)
 abline(reg=glm(y ~ x, data = example_data))</code></pre>
@@ -631,12 +648,12 @@ abline(reg=glm(y ~ x, data = example_data))</code></pre>
 <p>We may want to put a nonlinear fit line on our plot. This is easy in both Stata and R.</p>
 </div>
 <div class="column-left">
-<h4 id="stata-11">Stata</h4>
+<h4 id="stata-12">Stata</h4>
 <p><code>qfit</code> generates a quadratic fit line.</p>
 <pre><code>graph twoway ((scatter y x) || (qfit y x))</code></pre>
 </div>
 <div class="column-right">
-<h4 id="r-11">R</h4>
+<h4 id="r-12">R</h4>
 <p>Quadratic fits are slightly awkward in base R:</p>
 <pre><code>plot(example_data$y ~ example_data$x)
 curve(predict(glm(y~x, data=example_data), 
@@ -645,7 +662,6 @@ curve(predict(glm(y~x, data=example_data),
 <pre><code>ggplot(example_data, aes(x, y)) + 
   geom_point() + 
   geom_smooth(method=&quot;glm&quot;, formula= y ~ poly(x,2))</code></pre>
-</div>
 </div>
 
 

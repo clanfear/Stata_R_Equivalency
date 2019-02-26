@@ -26,10 +26,40 @@ output: html_document
 
 This document depicts both Stata and R approaches to data management, modeling, and plotting seen in SOC505. They are presented side-by-side to make it easier to move between platforms. It also demonstrates that Stata and R are quite similar in syntax in many cases. R often takes more code to do common tasks than Stata, but can do many things that are not possible in Stata. Both are excellent platforms for quantitative research, though Stata is more common in economics and R is more common in statistics and data science.
 
+<div class="column-center">
+
+## Loading Data
+
+Provided a Stata data set (`.dta` file), we can read it into either Stata or R. 
+</div>
+<div class="column-left">
+#### Stata
+
+Stata can only load one data set at a time, so it does not get assigned to an object.
+
+```
+use example_data.dta
+```
+
+This will load from Stata's current working directory. You can change the working directory using `cd "path"` (e.g. `cd "C:\Users\me\documents"`).
+</div>
+<div class="column-right">
+#### R
+
+R can load an arbitrary number of data sets at once, so they must each be assigned a name. I recommend `read_dta()` in the `haven` package--part of the `tidyverse`--for loading Stata files because it preserves Stata labels.
+
+```
+example_data <- haven::read_dta("example_data.dta")
+```
+
+R will load this file from your current working directory. If using a .Rmd file, this will default to the directory the .Rmd file is in. You can change the working directory with `setwd("path")` (e.g. `setwd("C:\Users\me\documents")`).
+</div>
+
+<div class="column-center">
 ## Creating Example Data
 
 For the first homework, we created a sample of simulated data with a specified covariance matrix and means.
-
+</div>
 <div class="column-left">
 #### Stata
 ```
