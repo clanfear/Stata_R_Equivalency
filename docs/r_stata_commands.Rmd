@@ -356,6 +356,11 @@ example_model2 <-
 summary(example_model2)
 ```
 
+To obtain odds ratios, exponentiate the log-odds coefficients and/or their confidence intervals:
+```
+exp(coef(example_model2))
+exp(confint(example_model2))
+```
 </div>
 
 

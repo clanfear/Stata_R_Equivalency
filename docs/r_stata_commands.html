@@ -371,7 +371,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">R and Stata Equivalencies</h1>
 <h4 class="author"><em>Chuck Lanfear</em></h4>
-<h4 class="date"><em>Updated 4:40 PM, February 25, 2019</em></h4>
+<h4 class="date"><em>Updated 3:30 PM, February 26, 2019</em></h4>
 
 </div>
 
@@ -605,6 +605,9 @@ logistic x_d1 y z
       family = binomial(link = &quot;logit&quot;),
       data = example_data)
 summary(example_model2)</code></pre>
+<p>To obtain odds ratios, exponentiate the log-odds coefficients and/or their confidence intervals:</p>
+<pre><code>exp(coef(example_model2))
+exp(confint(example_model2))</code></pre>
 </div>
 <div class="column-center">
 <h1 id="plotting">Plotting</h1>
