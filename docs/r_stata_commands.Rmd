@@ -59,6 +59,51 @@ In R, the operation is similar to Stata. We provide a vector of means (`mean_vec
 </div>
 
 <div class="column-center">
+## Creating Variables
+
+R and Stata are very different with regard to storing, accessing, and modifying data and variables. Stata only loads one data set at a time. R stores all object including data as objects and can have an arbitrary number loaded at once. Below I create an interaction term between `x` and `z` and a discrete version of `x`.
+</div>
+
+<div class="column-left">
+#### Stata
+In Stata, we just use `generate` and the variable is created in our current data.
+```
+generate x_z = x * z
+generate x_disc = 0
+replace x_disc = 1 if x < .5
+replace x_disc = 2 if x > .5 & x < 1.5
+replace x_disc = 3 if x > 1.5
+```
+</div>
+
+<div class="column-right">
+#### R
+
+In R, we assign variables inside the data we want to use. We can do this with base R:
+```
+example_data$x_z <- example_data$x * crime_data$z
+example_data$x_disc <- 
+  ifelse(example_data$x < .5, 1, 
+    ifelse(example_data$x > .5 & example_data$x < 1.5, 2,
+      ifelse(example_data$x > 1.5, 3, 0)))
+```
+Note here I chained three `ifelse()` statements together in one call. This is complex, but powerful.
+
+Or we can use the `dplyr` package:
+```
+example_data <- example_data %>% mutate(x_z = x * z)
+example_data <- example_data %>% 
+  mutate(
+    case_when(
+      x < .5 ~ 1,
+      x > .5 & x < 1.5 ~ 2,
+      x > 1.5 ~ 3
+    ))
+```
+`case_when()` does seuqential `ifelse()` statements but is much more readable.
+</div>
+
+<div class="column-center">
 ## Linear Models
 
 Modeling commands are very similar between R and Stata. The primary difference is that R argument go inside paranthesis rather than just after the name of the command as in Stata. Stata options come after a comma and are separate from formulae, but all R arguments--including formulae--are treated the same and separated by commas. Default R output is simpler than Stata: use `summary()` if you want Stata-like output. In Stata, you save model output using `estimates store` while in R you just assign the model object to a name. Note we specified which data we are using in R: R can have many data sets loaded at the same time!
@@ -144,50 +189,7 @@ example_data$residual_y_xz <- residuals(example_model)
 In R, we run the command on a saved model object. If you want to save the residuals to the original data, you can just assign them as a column.
 </div>
 
-<div class="column-center">
-## Creating Variables
 
-R and Stata are very different with regard to storing, accessing, and modifying data and variables. Stata only loads one data set at a time. R stores all object including data as objects and can have an arbitrary number loaded at once. Below I create an interaction term between `x` and `z` and a discrete version of `x`.
-</div>
-
-<div class="column-left">
-#### Stata
-In Stata, we just use `generate` and the variable is created in our current data.
-```
-generate x_z = x * z
-generate x_disc = 0
-replace x_disc = 1 if x < .5
-replace x_disc = 2 if x > .5 & x < 1.5
-replace x_disc = 3 if x > 1.5
-```
-</div>
-
-<div class="column-right">
-#### R
-
-In R, we assign variables inside the data we want to use. We can do this with base R:
-```
-example_data$x_z <- example_data$x * crime_data$z
-example_data$x_disc <- 
-  ifelse(example_data$x < .5, 1, 
-    ifelse(example_data$x > .5 & example_data$x < 1.5, 2,
-      ifelse(example_data$x > 1.5, 3, 0)))
-```
-Note here I chained three `ifelse()` statements together in one call. This is complex, but powerful.
-
-Or we can use the `dplyr` package:
-```
-example_data <- example_data %>% mutate(x_z = x * z)
-example_data <- example_data %>% 
-  mutate(
-    case_when(
-      x < .5 ~ 1,
-      x > .5 & x < 1.5 ~ 2,
-      x > 1.5 ~ 3
-    ))
-```
-`case_when()` does seuqential `ifelse()` statements but is much more readable.
-</div>
 
 <div class="column-center">
 ## Dummy Variables
@@ -262,100 +264,34 @@ example_data <- example_data %>%
 </div>
 
 <div class="column-center">
-## Scatterplots
+## Tables
 
 </div>
 
 <div class="column-left">
 #### Stata
 
-```
-scatter y x
-```
-
-</div>
-<div class="column-right">
-#### R
-
-Base R scatterplots use `plot()` and can take either a formula or `x` and `y` arguments:
-```
-plot(example_data$y ~ example_data$x)
-plot(example_data$x, example_data$y, data=example_data)
-```
-
-`gplot2` uses `geom_point()`:
 
 ```
-ggplot(example_data, aes(x, y)) + 
-  geom_point()
-```
-</div>
-
-<div class="column-center">
-## Fit Lines on Scatterplots
-
-Often we want to plot regression lines on our scatterplots.
-</div>
-
-<div class="column-left">
-#### Stata
-
-We can just draw both the scatter and a linear fit (`lfit`) at the same time:
-```
-graph twoway ((scatter y x) || (lfit y x))
+tab x_disc
+tab x_d1 x_d2
 ```
 
 </div>
 <div class="column-right">
 #### R
 
-In base R, we draw the scatterplot and add a linear line (`abline()`):
+Base R:
 ```
-plot(example_data$y ~ example_data$x)
-abline(reg=glm(y ~ x, data = example_data))
-```
+table(example_data$x_disc)
+table(example_data$x_d1, example_data$x_d2)
 
-`gplot2` adds a line with `geom_smooth()`:
-```
-ggplot(example_data, aes(x, y)) + 
-  geom_point() + 
-  geom_smooth(method="glm", formula= y ~ x)
 ```
 
-By default `geom_smooth()` includes a 95% confidence interval around the line.
-</div>
-
-<div class="column-center">
-## Quadratic Lines on Scatterplots
-
-We may want to put a nonlinear fit line on our plot. This is easy in both Stata and R.
-</div>
-
-<div class="column-left">
-#### Stata
-
-`qfit` generates a quadratic fit line.
-
+`dplyr`:
 ```
-graph twoway ((scatter y x) || (qfit y x))
-```
-
-</div>
-<div class="column-right">
-#### R
-
-Quadratic fits are slightly awkward in base R:
-```
-plot(example_data$y ~ example_data$x)
-curve(predict(glm(y~x, data=example_data), 
-  newdata=data.frame(wt=x)), add=T)
-```
-
-They use the same syntax as linear fits in `gplot2`:
-```
-ggplot(example_data, aes(x, y)) + 
-  geom_point() + 
-  geom_smooth(method="glm", formula= y ~ poly(x,2))
+example_data %>% count(x_disc)
+example_data %>% count(x_d1, x_d2)
 ```
 </div>
 
@@ -390,4 +326,106 @@ example_model2 <-
 summary(example_model2)
 ```
 
+</div>
+
+
+
+<div class="column-center">
+# Plotting
+
+## Scatterplots
+
+</div>
+
+<div class="column-left">
+#### Stata
+
+```
+scatter y x
+```
+
+</div>
+<div class="column-right">
+#### R
+
+Base R scatterplots use `plot()` and can take either a formula or `x` and `y` arguments:
+```
+plot(example_data$y ~ example_data$x)
+plot(example_data$x, example_data$y, data=example_data)
+```
+
+`gplot2` uses `geom_point()`:
+
+```
+ggplot(example_data, aes(x, y)) + 
+  geom_point()
+```
+</div>
+
+<div class="column-center">
+### Fit Lines on Scatterplots
+
+Often we want to plot regression lines on our scatterplots.
+</div>
+
+<div class="column-left">
+#### Stata
+
+We can just draw both the scatter and a linear fit (`lfit`) at the same time:
+```
+graph twoway ((scatter y x) || (lfit y x))
+```
+
+</div>
+<div class="column-right">
+#### R
+
+In base R, we draw the scatterplot and add a linear line (`abline()`):
+```
+plot(example_data$y ~ example_data$x)
+abline(reg=glm(y ~ x, data = example_data))
+```
+
+`gplot2` adds a line with `geom_smooth()`:
+```
+ggplot(example_data, aes(x, y)) + 
+  geom_point() + 
+  geom_smooth(method="glm", formula= y ~ x)
+```
+
+By default `geom_smooth()` includes a 95% confidence interval around the line.
+</div>
+
+<div class="column-center">
+### Quadratic Lines on Scatterplots
+
+We may want to put a nonlinear fit line on our plot. This is easy in both Stata and R.
+</div>
+
+<div class="column-left">
+#### Stata
+
+`qfit` generates a quadratic fit line.
+
+```
+graph twoway ((scatter y x) || (qfit y x))
+```
+
+</div>
+<div class="column-right">
+#### R
+
+Quadratic fits are slightly awkward in base R:
+```
+plot(example_data$y ~ example_data$x)
+curve(predict(glm(y~x, data=example_data), 
+  newdata=data.frame(wt=x)), add=T)
+```
+
+They use the same syntax as linear fits in `gplot2`:
+```
+ggplot(example_data, aes(x, y)) + 
+  geom_point() + 
+  geom_smooth(method="glm", formula= y ~ poly(x,2))
+```
 </div>
