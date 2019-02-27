@@ -371,7 +371,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">R and Stata Equivalencies</h1>
 <h4 class="author"><em>Chuck Lanfear</em></h4>
-<h4 class="date"><em>Updated 3:30 PM, February 26, 2019</em></h4>
+<h4 class="date"><em>Updated 4:47 PM, February 26, 2019</em></h4>
 
 </div>
 
@@ -665,6 +665,26 @@ curve(predict(glm(y~x, data=example_data),
 <pre><code>ggplot(example_data, aes(x, y)) + 
   geom_point() + 
   geom_smooth(method=&quot;glm&quot;, formula= y ~ poly(x,2))</code></pre>
+</div>
+<div class="column-center">
+<h2 id="predicted-values">Predicted Values</h2>
+</div>
+<div id="stata-13" class="section level4">
+<h4>Stata</h4>
+<p>You can generate predictions as a new variable in your data:</p>
+<pre><code>predict xb pr_vals</code></pre>
+<p>Or get predictions at set values… but I forget how to do this elegantly in Stata. Will add.</p>
+<pre><code> </code></pre>
+<div class="column-left">
+
+</div>
+<div class="column-right">
+<h4 id="r-13">R</h4>
+<p>R uses the <code>predict()</code> function to generate predicted values.</p>
+<pre><code>predict(example_model2)</code></pre>
+<p>If you want to predict an outcome at specific values of a variable, you need to provide new data. The new data must have a value for every variable on the right hand side of the model. It accepts multiple rows to produce multiple predictions as well.</p>
+<pre><code>predict(example_model2, newdata=data.frame(x=1, z=2), type=&quot;response&quot;)</code></pre>
+</div>
 </div>
 
 

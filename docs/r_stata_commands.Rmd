@@ -464,3 +464,33 @@ ggplot(example_data, aes(x, y)) +
   geom_smooth(method="glm", formula= y ~ poly(x,2))
 ```
 </div>
+
+<div class="column-center">
+## Predicted Values
+
+</div>
+#### Stata
+You can generate predictions as a new variable in your data:
+```
+predict xb pr_vals
+```
+Or get predictions at set values... but I forget how to do this elegantly in Stata. Will add.
+```
+ 
+```
+
+<div class="column-left">
+
+</div>
+<div class="column-right">
+#### R
+
+R uses the `predict()` function to generate predicted values. 
+```
+predict(example_model2)
+```
+If you want to predict an outcome at specific values of a variable, you need to provide new data. The new data must have a value for every variable on the right hand side of the model. It accepts multiple rows to produce multiple predictions as well.
+```
+predict(example_model2, newdata=data.frame(x=1, z=2), type="response")
+```
+</div>
