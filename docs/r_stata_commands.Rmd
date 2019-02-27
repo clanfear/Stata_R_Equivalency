@@ -469,6 +469,9 @@ ggplot(example_data, aes(x, y)) +
 ## Predicted Values
 
 </div>
+
+
+<div class="column-left">
 #### Stata
 You can generate predictions as a new variable in your data:
 ```
@@ -478,8 +481,6 @@ Or get predictions at set values... but I forget how to do this elegantly in Sta
 ```
  
 ```
-
-<div class="column-left">
 
 </div>
 <div class="column-right">
