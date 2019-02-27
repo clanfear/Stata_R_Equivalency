@@ -492,6 +492,12 @@ predict(example_model2)
 ```
 If you want to predict an outcome at specific values of a variable, you need to provide new data. The new data must have a value for every variable on the right hand side of the model. It accepts multiple rows to produce multiple predictions as well.
 ```
-predict(example_model2, newdata=data.frame(x=1, z=2), type="response")
+predict(example_model2, 
+        newdata=data.frame(x=1, z=2), 
+        type="response")
+predict(example_model2, 
+        newdata=data.frame(x=rep(1,10), 
+                  z=seq(-1,1, length.out=10)),
+        type="response")
 ```
 </div>

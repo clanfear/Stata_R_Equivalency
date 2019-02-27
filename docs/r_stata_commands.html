@@ -371,7 +371,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">R and Stata Equivalencies</h1>
 <h4 class="author"><em>Chuck Lanfear</em></h4>
-<h4 class="date"><em>Updated 4:54 PM, February 26, 2019</em></h4>
+<h4 class="date"><em>Updated 5:03 PM, February 26, 2019</em></h4>
 
 </div>
 
@@ -681,7 +681,13 @@ curve(predict(glm(y~x, data=example_data),
 <p>R uses the <code>predict()</code> function to generate predicted values.</p>
 <pre><code>predict(example_model2)</code></pre>
 <p>If you want to predict an outcome at specific values of a variable, you need to provide new data. The new data must have a value for every variable on the right hand side of the model. It accepts multiple rows to produce multiple predictions as well.</p>
-<pre><code>predict(example_model2, newdata=data.frame(x=1, z=2), type=&quot;response&quot;)</code></pre>
+<pre><code>predict(example_model2, 
+        newdata=data.frame(x=1, z=2), 
+        type=&quot;response&quot;)
+predict(example_model2, 
+        newdata=data.frame(x=rep(1,10), 
+                  z=seq(-1,1, length.out=10)),
+        type=&quot;response&quot;)</code></pre>
 </div>
 
 
