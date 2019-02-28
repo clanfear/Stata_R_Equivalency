@@ -371,7 +371,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">R and Stata Equivalencies</h1>
 <h4 class="author"><em>Chuck Lanfear</em></h4>
-<h4 class="date"><em>Updated 5:03 PM, February 26, 2019</em></h4>
+<h4 class="date"><em>Updated 3:09 PM, February 28, 2019</em></h4>
 
 </div>
 
@@ -452,7 +452,7 @@ replace x_disc = 3 if x &gt; 1.5</code></pre>
 <div class="column-right">
 <h4 id="r-2">R</h4>
 <p>In R, we assign variables inside the data we want to use. We can do this with base R:</p>
-<pre><code>example_data$x_z &lt;- example_data$x * crime_data$z
+<pre><code>example_data$x_z &lt;- example_data$x * example_data$z
 example_data$x_disc &lt;- 
   ifelse(example_data$x &lt; .5, 1, 
     ifelse(example_data$x &gt; .5 &amp; example_data$x &lt; 1.5, 2,
@@ -461,7 +461,7 @@ example_data$x_disc &lt;-
 <p>Or we can use the <code>dplyr</code> package:</p>
 <pre><code>example_data &lt;- example_data %&gt;% mutate(x_z = x * z)
 example_data &lt;- example_data %&gt;% 
-  mutate(
+  mutate(x_disc =
     case_when(
       x &lt; .5 ~ 1,
       x &gt; .5 &amp; x &lt; 1.5 ~ 2,
@@ -688,6 +688,25 @@ predict(example_model2,
         newdata=data.frame(x=rep(1,10), 
                   z=seq(-1,1, length.out=10)),
         type=&quot;response&quot;)</code></pre>
+</div>
+<div class="column-center">
+<h2 id="plotting-predictions">Plotting Predictions</h2>
+</div>
+<div class="column-left">
+<h4 id="stata-14">Stata</h4>
+<p>Still need to add Stata code from Jerry here.</p>
+</div>
+<div class="column-left">
+<h4 id="r-14">R</h4>
+<p><code>ggplot2</code> is well suited to making complex predicted value plots. Here we generate a range of <code>y</code> values from 0 t 8 in increments of 0.25. We do this for <em>each</em> value of z: -1, 0, and 1.</p>
+<pre><code>pr_data &lt;- data.frame(y  = rep(seq(0,8,0.25), each=3),
+                           z  = c(-1,0,1))
+pr_data$predicted &lt;- predict(example_model2, newdata = pr_data, type = &quot;response&quot;)
+ggplot(pr_data, aes(y=predicted, x=y, group=z, col=z)) + geom_line()</code></pre>
+<p><code>ggeffects</code> streamlines this process by automatically generating the data and predictions:</p>
+<pre><code>library(ggeffects)
+example_model2 %&gt;% ggpredict(terms=c(&quot;y [n=20]&quot;,&quot;z&quot;)) %&gt;% plot()</code></pre>
+<p>The <code>n=20</code> in terms forces <code>ggpredict()</code> to generate 20 values of <code>y</code>: this makes the lines smoother curves.</p>
 </div>
 
 
