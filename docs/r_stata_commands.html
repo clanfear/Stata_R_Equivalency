@@ -371,7 +371,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">R and Stata Equivalencies</h1>
 <h4 class="author"><em>Chuck Lanfear</em></h4>
-<h4 class="date"><em>Updated 3:52 PM, February 28, 2019</em></h4>
+<h4 class="date"><em>Updated 3:59 PM, February 28, 2019</em></h4>
 
 </div>
 
@@ -673,8 +673,9 @@ curve(predict(glm(y~x, data=example_data),
 <h4 id="stata-13">Stata</h4>
 <p>You can generate predictions as a new variable in your data:</p>
 <pre><code>predict xb pr_vals</code></pre>
-<p>Or get predictions at set values… but I forget how to do this elegantly in Stata. Will add.</p>
-<pre><code> </code></pre>
+<p>Or get predictions at set values:</p>
+<pre><code>prvalue , x(y=1 z=2)
+prvalue , x(y=10 z=-1)</code></pre>
 </div>
 <div class="column-right">
 <h4 id="r-13">R</h4>
@@ -682,11 +683,12 @@ curve(predict(glm(y~x, data=example_data),
 <pre><code>predict(example_model2)</code></pre>
 <p>If you want to predict an outcome at specific values of a variable, you need to provide new data. The new data must have a value for every variable on the right hand side of the model. It accepts multiple rows to produce multiple predictions as well.</p>
 <pre><code>predict(example_model2, 
-        newdata=data.frame(x=1, z=2), 
+        newdata=data.frame(y=1, z=2), 
         type=&quot;response&quot;)
 predict(example_model2, 
-        newdata=data.frame(x=rep(1,10), 
-                  z=seq(-1,1, length.out=10)),
+        newdata=
+          data.frame(y=rep(1,10), 
+                     z=seq(-1,1, length.out=10)),
         type=&quot;response&quot;)</code></pre>
 </div>
 <div class="column-center">
@@ -705,8 +707,8 @@ graph twoway (line predval_ap1 predval_ax  || line predval_bp1 predval_bx || lin
 <div class="column-right">
 <h4 id="r-14">R</h4>
 <p><code>ggplot2</code> is well suited to making complex predicted value plots. Here we generate a range of <code>y</code> values from 0 to 8 in increments of 0.25. We do this for <em>each</em> value of z: -1, 0, and 1.</p>
-<pre><code>pr_data &lt;- data.frame(y  = rep(seq(0,8,0.25), each=3),
-                           z  = c(-1,0,1))
+<pre><code>pr_data &lt;- data.frame(y = rep(seq(0,8,0.25), each=3),
+                      z = c(-1,0,1))
 pr_data$predicted &lt;- 
    predict(example_model2, newdata = pr_data,
    type = &quot;response&quot;)
