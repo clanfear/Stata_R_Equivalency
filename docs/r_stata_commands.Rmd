@@ -386,7 +386,7 @@ scatter y x
 Base R scatterplots use `plot()` and can take either a formula or `x` and `y` arguments:
 ```
 plot(example_data$y ~ example_data$x)
-plot(example_data$x, example_data$y, data=example_data)
+plot(example_data$x, example_data$y)
 ```
 
 `gplot2` uses `geom_point()`:
