@@ -541,8 +541,8 @@ ggplot(pr_data, aes(y=predicted, x=y, group=z, col=z)) +
 ```
 library(ggeffects)
 example_model2 %>% 
-   ggpredict(terms=c("y [n=20]","z")) %>% 
+   ggpredict(terms=c("y [n=30]","z")) %>% 
    plot()
 ```
-The `n=20` in terms forces `ggpredict()` to generate 20 values of `y`: this makes the lines smoother curves.
+The `n=20` in terms forces `ggpredict()` to generate 30 values of `y`: this makes the lines smoother curves.
 </div>
