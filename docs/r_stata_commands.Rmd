@@ -497,9 +497,8 @@ predict(example_model2,
         newdata=data.frame(y=1, z=2), 
         type="response")
 predict(example_model2, 
-        newdata=
-          data.frame(y=rep(1,10), 
-                     z=seq(-1,1, length.out=10)),
+        newdata=data.frame(y=rep(1,10), 
+                           z=seq(-1,1, length.out=10)),
         type="response")
 ```
 </div>
@@ -556,5 +555,5 @@ example_model2 %>%
    ggpredict(terms=c("y [n=30]","z")) %>% 
    plot()
 ```
-The `n=20` in terms forces `ggpredict()` to generate 30 values of `y`: this makes the lines smoother curves.
+The `n=30` in terms forces `ggpredict()` to generate 30 values of `y`: this makes the lines smoother curves.
 </div>

@@ -371,7 +371,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">R and Stata Equivalencies</h1>
 <h4 class="author"><em>Chuck Lanfear</em></h4>
-<h4 class="date"><em>Updated 4:17 PM, March 05, 2019</em></h4>
+<h4 class="date"><em>Updated 4:20 PM, March 05, 2019</em></h4>
 
 </div>
 
@@ -686,9 +686,8 @@ prvalue , x(y=10 z=-1)</code></pre>
         newdata=data.frame(y=1, z=2), 
         type=&quot;response&quot;)
 predict(example_model2, 
-        newdata=
-          data.frame(y=rep(1,10), 
-                     z=seq(-1,1, length.out=10)),
+        newdata=data.frame(y=rep(1,10), 
+                           z=seq(-1,1, length.out=10)),
         type=&quot;response&quot;)</code></pre>
 </div>
 <div class="column-center">
@@ -727,7 +726,7 @@ ggplot(pr_data, aes(y=predicted, x=y, group=z, col=z)) +
 example_model2 %&gt;% 
    ggpredict(terms=c(&quot;y [n=30]&quot;,&quot;z&quot;)) %&gt;% 
    plot()</code></pre>
-<p>The <code>n=20</code> in terms forces <code>ggpredict()</code> to generate 30 values of <code>y</code>: this makes the lines smoother curves.</p>
+<p>The <code>n=30</code> in terms forces <code>ggpredict()</code> to generate 30 values of <code>y</code>: this makes the lines smoother curves.</p>
 </div>
 
 
