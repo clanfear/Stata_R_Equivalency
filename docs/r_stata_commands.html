@@ -371,7 +371,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">R and Stata Equivalencies</h1>
 <h4 class="author"><em>Chuck Lanfear</em></h4>
-<h4 class="date"><em>Updated 4:11 PM, February 28, 2019</em></h4>
+<h4 class="date"><em>Updated 4:17 PM, March 05, 2019</em></h4>
 
 </div>
 
@@ -673,7 +673,7 @@ curve(predict(glm(y~x, data=example_data),
 <h4 id="stata-13">Stata</h4>
 <p>You can generate predictions as a new variable in your data:</p>
 <pre><code>predict xb pr_vals</code></pre>
-<p>Or get predictions at set values:</p>
+<p>Or get predictions at set values with <code>prvalue</code>. You will need to install <code>prvalue</code> from a package such as <code>spost9_ado</code> using <code>net install spost9_ado.pkg</code></p>
 <pre><code>prvalue , x(y=1 z=2)
 prvalue , x(y=10 z=-1)</code></pre>
 </div>
@@ -696,13 +696,21 @@ predict(example_model2,
 </div>
 <div class="column-left">
 <h4 id="stata-14">Stata</h4>
-<p>Plotting predictions from a model at varying levels of two variables requires multiple <code>prgen</code> calls:</p>
+<p>Plotting predictions from a model at varying levels of two variables requires multiple <code>prgen</code> (from <code>spost9_ado</code>) calls:</p>
 <pre><code>logit x_d1 y z
 prgen y,from(0) to(8) generate(predval_a) n(30) x(z=-1)
 prgen y,from(0) to(8) generate(predval_b) n(30) x(z=0)
 prgen y,from(0) to(8) generate(predval_c) n(30) x(z=1)
 
 graph twoway (line predval_ap1 predval_ax  || line predval_bp1 predval_bx || line predval_cp1 predval_cx )</code></pre>
+<p>Note <code>prgen</code> works only with <code>logit</code> and not <code>glm</code></p>
+<p>Or using <code>margins</code> and <code>marginsplot</code></p>
+<pre><code>glm x_d1 y z, family(binomial) link(logit)
+margins, at(y=(0(1)8) z=-1) ///
+         at(y=(0(1)8) z=0) ///
+         at(y=(0(1)8) z=1)
+marginsplot</code></pre>
+<p><code>margins</code> and <code>marginsplot</code> work with <code>glm</code> or <code>logit</code></p>
 </div>
 <div class="column-right">
 <h4 id="r-14">R</h4>

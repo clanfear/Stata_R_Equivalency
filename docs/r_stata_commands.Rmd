@@ -477,7 +477,7 @@ You can generate predictions as a new variable in your data:
 ```
 predict xb pr_vals
 ```
-Or get predictions at set values:
+Or get predictions at set values with `prvalue`. You will need to install `prvalue` from a package such as `spost9_ado` using `net install spost9_ado.pkg`
 ```
 prvalue , x(y=1 z=2)
 prvalue , x(y=10 z=-1)
@@ -513,7 +513,7 @@ predict(example_model2,
 <div class="column-left">
 #### Stata
 
-Plotting predictions from a model at varying levels of two variables requires multiple `prgen` calls:
+Plotting predictions from a model at varying levels of two variables requires multiple `prgen` (from `spost9_ado`) calls:
 ```
 logit x_d1 y z
 prgen y,from(0) to(8) generate(predval_a) n(30) x(z=-1)
@@ -522,6 +522,18 @@ prgen y,from(0) to(8) generate(predval_c) n(30) x(z=1)
 
 graph twoway (line predval_ap1 predval_ax  || line predval_bp1 predval_bx || line predval_cp1 predval_cx )
 ```
+Note `prgen` works only with `logit` and not `glm`
+
+Or using `margins` and `marginsplot`
+```
+glm x_d1 y z, family(binomial) link(logit)
+margins, at(y=(0(1)8) z=-1) ///
+         at(y=(0(1)8) z=0) ///
+         at(y=(0(1)8) z=1)
+marginsplot
+```
+`margins` and `marginsplot` work with `glm` or `logit`
+
 </div>
 <div class="column-right">
 #### R

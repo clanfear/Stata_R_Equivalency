@@ -43,3 +43,9 @@ prgen y,from(0) to(8) generate(predval_b) n(30) x(z=0)
 prgen y,from(0) to(8) generate(predval_c) n(30) x(z=1)
 
 graph twoway (line predval_ap1 predval_ax  || line predval_bp1 predval_bx || line predval_cp1 predval_cx )
+
+logit x_d1 y z
+margins, at(y=(0(1)8) z=-1) ///
+         at(y=(0(1)8) z=0) ///
+         at(y=(0(1)8) z=1)
+marginsplot
