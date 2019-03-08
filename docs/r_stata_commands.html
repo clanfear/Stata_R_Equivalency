@@ -371,7 +371,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">R and Stata Equivalencies</h1>
 <h4 class="author"><em>Chuck Lanfear</em></h4>
-<h4 class="date"><em>Updated 4:20 PM, March 05, 2019</em></h4>
+<h4 class="date"><em>Updated 12:28 PM, March 08, 2019</em></h4>
 
 </div>
 
@@ -727,6 +727,111 @@ example_model2 %&gt;%
    ggpredict(terms=c(&quot;y [n=30]&quot;,&quot;z&quot;)) %&gt;% 
    plot()</code></pre>
 <p>The <code>n=30</code> in terms forces <code>ggpredict()</code> to generate 30 values of <code>y</code>: this makes the lines smoother curves.</p>
+</div>
+<div class="column-center">
+<h2 id="heteroskedasticity">Heteroskedasticity</h2>
+<h3 id="residual-plots">Residual Plots</h3>
+</div>
+<div class="column-left">
+<h4 id="stata-15">Stata</h4>
+<pre><code>glm y x z
+predict yres2, residual
+predict yhat, xb
+scatter yres2 yhat</code></pre>
+</div>
+<div class="column-right">
+<h4 id="r-15">R</h4>
+<p>Simple base R method:</p>
+<pre><code>plot(residuals(example_model)~fitted(example_model))
+plot(residuals(example_model)^2~fitted(example_model))</code></pre>
+<p><code>broom</code>, <code>dplyr</code>, and <code>ggplot2</code> method:</p>
+<pre><code>example_model %&gt;% 
+  broom::augment() %&gt;% 
+  ggplot(aes(y=.resid, x=.fitted)) + 
+  geom_point()</code></pre>
+</div>
+<div class="column-center">
+<h3 id="breusch-pagan-cook-weisburg-tests">Breusch-Pagan / Cook-Weisburg Tests</h3>
+</div>
+<div class="column-left">
+<h4 id="stata-16">Stata</h4>
+<p>We can run tests manually.</p>
+<pre><code>glm y x z
+predict yres2, residual
+
+glm yres2 x z family(gauss) link(identity)
+test x=z=0
+glm yres2 yhat yhat2</code></pre>
+<p>Or use <code>hettest</code> after an OLS run using <code>regress</code>.</p>
+<pre><code>reg y x z
+hettest</code></pre>
+</div>
+<div class="column-right">
+<h4 id="r-16">R</h4>
+<p>We can do this manually:</p>
+<pre><code>example_data$yres2 &lt;- residuals(example_model)^2
+glm(yres2 ~ x + z, data=example_data)
+
+example_data$yhat &lt;- fitted(example_model)
+example_data$yhat2 &lt;- fitted(example_model)^2
+glm(yres2 ~ yhat + yhat2, data=example_data)</code></pre>
+<p>Or <code>lmtest</code> contains a Breusch-Pagan test:</p>
+<pre><code>lmtest::bptest(example_model)</code></pre>
+</div>
+<div class="column-center">
+<h3 id="heteroskedasticity-consistent-robust-errors">Heteroskedasticity-Consistent / Robust Errors</h3>
+</div>
+<div class="column-left">
+<h4 id="stata-17">Stata</h4>
+<pre><code>glm y x z, family(gauss) link(identity) vce(robust)</code></pre>
+</div>
+<div class="column-right">
+<h4 id="r-17">R</h4>
+<p><code>sjstats</code> has a simple wrapper:</p>
+<pre><code>sjstats::robust(example_model)</code></pre>
+<p>Or we can do it with <code>lmtest</code>:</p>
+<pre><code>lmtest::coeftest(example_model, vcov = vcovHC)</code></pre>
+</div>
+<div class="column-center">
+<h3 id="resampling-bootstrapping">Resampling / Bootstrapping</h3>
+</div>
+<div class="column-left">
+<h4 id="stata-18">Stata</h4>
+<pre><code>glm y x z, family(gauss) link(identity) vce(bootstrap, reps(1000))</code></pre>
+</div>
+<div class="column-right">
+<h4 id="r-18">R</h4>
+<p>The <code>car</code> package provides a shortcut to <code>boot</code> for easy bootstrapped SEs.</p>
+<pre><code>car::Boot(glm(y ~ x + z, data=example_data))</code></pre>
+<p>We can also use <code>boot</code> directly:</p>
+<pre><code>library(boot)
+
+boot_glm &lt;- function(d,indices) {  
+  d &lt;- d[indices,]  
+  fit &lt;- glm(y ~ x + z, data = d)  
+  return(coef(fit))  
+}
+boot(data = example_data, 
+     statistic = boot_glm, 
+     R = 1000) </code></pre>
+<p>Or we do it manually using modern tidyverse commands:</p>
+<pre><code>library(dplyr)
+library(broom)
+library(rsample)
+library(tidyr)
+library(purrr)
+
+example_data %&gt;% 
+  bootstraps(times=1000) %&gt;% 
+  mutate(model = map(splits, 
+                     function(x) glm(y ~ x + z, data=x)),
+         coef_info = map(model, tidy)) %&gt;% 
+  unnest(coef_info) %&gt;% 
+  group_by(term) %&gt;%
+  summarize(pe = mean(estimate),
+            se = sd(estimate),
+            low =  quantile(estimate, .025),
+            high = quantile(estimate, .975))</code></pre>
 </div>
 
 

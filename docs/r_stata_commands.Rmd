@@ -557,3 +557,163 @@ example_model2 %>%
 ```
 The `n=30` in terms forces `ggpredict()` to generate 30 values of `y`: this makes the lines smoother curves.
 </div>
+
+<div class="column-center">
+## Heteroskedasticity
+
+### Residual Plots
+</div>
+
+<div class="column-left">
+#### Stata
+```
+glm y x z
+predict yres2, residual
+predict yhat, xb
+scatter yres2 yhat
+```
+</div>
+
+<div class="column-right">
+#### R
+
+Simple base R method:
+```
+plot(residuals(example_model)~fitted(example_model))
+plot(residuals(example_model)^2~fitted(example_model))
+```
+
+`broom`, `dplyr`, and `ggplot2` method:
+```
+example_model %>% 
+  broom::augment() %>% 
+  ggplot(aes(y=.resid, x=.fitted)) + 
+  geom_point()
+```
+</div>
+
+<div class="column-center">
+### Breusch-Pagan / Cook-Weisburg Tests
+</div>
+
+<div class="column-left">
+#### Stata
+
+We can run tests manually.
+```
+glm y x z
+predict yres2, residual
+
+glm yres2 x z family(gauss) link(identity)
+test x=z=0
+glm yres2 yhat yhat2
+```
+
+Or use `hettest` after an OLS run using `regress`.
+```
+reg y x z
+hettest
+```
+</div>
+
+<div class="column-right">
+#### R
+
+We can do this manually:
+```
+example_data$yres2 <- residuals(example_model)^2
+glm(yres2 ~ x + z, data=example_data)
+
+example_data$yhat <- fitted(example_model)
+example_data$yhat2 <- fitted(example_model)^2
+glm(yres2 ~ yhat + yhat2, data=example_data)
+```
+
+Or `lmtest` contains a Breusch-Pagan test:
+```
+lmtest::bptest(example_model)
+```
+</div>
+
+<div class="column-center">
+### Heteroskedasticity-Consistent / Robust Errors
+</div>
+
+<div class="column-left">
+#### Stata
+```
+glm y x z, family(gauss) link(identity) vce(robust)
+```
+</div>
+
+<div class="column-right">
+#### R
+
+`sjstats` has a simple wrapper:
+```
+sjstats::robust(example_model)
+```
+
+Or we can do it with `lmtest`:
+```
+lmtest::coeftest(example_model, vcov = vcovHC)
+```
+</div>
+
+<div class="column-center">
+### Resampling / Bootstrapping
+
+</div>
+
+<div class="column-left">
+#### Stata
+
+```
+glm y x z, family(gauss) link(identity) vce(bootstrap, reps(1000))
+```
+</div>
+
+<div class="column-right">
+#### R
+
+The `car` package provides a shortcut to `boot` for easy bootstrapped SEs.
+```
+car::Boot(glm(y ~ x + z, data=example_data))
+```
+
+We can also use `boot` directly:
+```
+library(boot)
+
+boot_glm <- function(d,indices) {  
+  d <- d[indices,]  
+  fit <- glm(y ~ x + z, data = d)  
+  return(coef(fit))  
+}
+boot(data = example_data, 
+     statistic = boot_glm, 
+     R = 1000) 
+```
+
+Or we do it manually using modern tidyverse commands:
+```
+library(dplyr)
+library(broom)
+library(rsample)
+library(tidyr)
+library(purrr)
+
+example_data %>% 
+  bootstraps(times=1000) %>% 
+  mutate(model = map(splits, 
+                     function(x) glm(y ~ x + z, data=x)),
+         coef_info = map(model, tidy)) %>% 
+  unnest(coef_info) %>% 
+  group_by(term) %>%
+  summarize(pe = mean(estimate),
+            se = sd(estimate),
+            low =  quantile(estimate, .025),
+            high = quantile(estimate, .975))
+```
+</div>
+
