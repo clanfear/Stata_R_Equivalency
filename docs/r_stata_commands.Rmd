@@ -2,7 +2,9 @@
 title: "R and Stata Equivalencies"
 author: "Chuck Lanfear"
 date: "Updated `r stringr::str_replace(format(Sys.time(), '%I:%M %p, %B %d, %Y'), '^0','')`"
-output: html_document
+output: 
+  html_document:
+    self_contained: false
 ---
 
 <style>
@@ -717,3 +719,158 @@ example_data %>%
 ```
 </div>
 
+
+<div class="column-center">
+## Model Diagnostics
+
+### Partial Plots
+</div>
+
+<div class="column-left">
+#### Stata
+</div>
+
+<div class="column-right">
+#### R
+```
+res_x_z <- residuals(glm(x~z, data=example_data))
+res_y_z <- residuals(glm(y~z, data=example_data)) 
+plot(res_y_z~res_x_z)
+```
+</div>
+
+<div class="column-center">
+### Leverage
+</div>
+
+<div class="column-left">
+#### Stata
+</div>
+
+<div class="column-right">
+#### R
+
+`hatvalues()` produces... hat values.
+```
+hatvalues(example_model)
+```
+
+`augment()` adds values to the data used to fit the model: `.hat` is the diagonal of the hat matrix.
+```
+broom::augment(example_model)
+```
+</div>
+
+<div class="column-center">
+### Studentized Residuals
+</div>
+
+<div class="column-left">
+#### Stata
+</div>
+
+<div class="column-right">
+#### R
+```
+rstudent(example_model)
+```
+</div>
+
+<div class="column-center">
+### DFITS
+</div>
+
+<div class="column-left">
+#### Stata
+</div>
+
+<div class="column-right">
+#### R
+`dffits()` gets just the DFITS values.
+```
+dffits(example_model)
+```
+`influence.measures()` gets DFITS and other influence measures.
+```
+influence.measures(example_model)
+```
+</div>
+
+<div class="column-center">
+### Cook's D
+</div>
+
+<div class="column-left">
+#### Stata
+</div>
+
+<div class="column-right">
+#### R
+For just Cook's D values:
+```
+cookds.distance(example_model)
+```
+Or `augment()` can return the data with Cook's D added for each row.
+```
+broom::augment(example_model)
+```
+</div>
+
+<div class="column-center">
+### dfBetas
+</div>
+
+<div class="column-left">
+#### Stata
+</div>
+
+<div class="column-right">
+#### R
+For DF Beta alone:
+```
+dfbetas(example_model)
+
+```
+Or DF Beta with other statistics:
+```
+influence.measures(example_model)
+```
+</div>
+
+<div class="column-center">
+### VIF
+</div>
+
+<div class="column-left">
+#### Stata
+</div>
+
+<div class="column-right">
+#### R
+`car` has a function for VIFs:
+```
+car::vif(example_model)
+```
+</div>
+
+<div class="column-center">
+### Diagnostic Plots
+</div>
+
+<div class="column-left">
+#### Stata
+</div>
+
+<div class="column-right">
+#### R
+Just running `plot()` on an R model will produce a series of diagnostic plots. You must hit `ENTER` in the console to browse through them.
+```
+plot(example_model)
+```
+This produces the following plots (in order):
+
+* Residuals vs fitted values
+* Q-Q Plot
+* Scale-Location 
+* Residuals vs. Leverage
+</div>
