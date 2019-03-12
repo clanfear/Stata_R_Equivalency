@@ -759,10 +759,11 @@ abline(lm(res_y_z~res_x_z), col="blue")
 
 <div class="column-left">
 #### Stata
-</div>
 ```
 predict leverage, hat
 ```
+</div>
+
 <div class="column-right">
 #### R
 
