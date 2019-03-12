@@ -821,11 +821,12 @@ influence.measures(example_model)
 <div class="column-center">
 ### Cook's D
 </div>
+
+<div class="column-left">
+#### Stata
 ```
 predict cooksd, cooksd
 ```
-<div class="column-left">
-#### Stata
 </div>
 
 <div class="column-right">
