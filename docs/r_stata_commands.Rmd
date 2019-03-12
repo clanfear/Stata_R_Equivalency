@@ -728,14 +728,28 @@ example_data %>%
 
 <div class="column-left">
 #### Stata
+
+We'll create a variable to indicate the case number, then run `avplot`.
+```
+generate case=_n
+avplots, mlabel(case)
+```
 </div>
 
 <div class="column-right">
 #### R
+`car` has an `avPlots()` function:
 ```
+car::avPlots(example_model)
+```
+Or you can do it manually:
+```
+example_data$case <- 1:nrow(example_data)
 res_x_z <- residuals(glm(x~z, data=example_data))
 res_y_z <- residuals(glm(y~z, data=example_data)) 
 plot(res_y_z~res_x_z)
+text(res_x_z, res_y_z, labels=example_data$case)
+abline(lm(res_y_z~res_x_z), col="blue")
 ```
 </div>
 
@@ -746,7 +760,9 @@ plot(res_y_z~res_x_z)
 <div class="column-left">
 #### Stata
 </div>
-
+```
+predict leverage, hat
+```
 <div class="column-right">
 #### R
 
@@ -767,6 +783,9 @@ broom::augment(example_model)
 
 <div class="column-left">
 #### Stata
+```
+predict studentres, rstudent
+```
 </div>
 
 <div class="column-right">
@@ -777,20 +796,23 @@ rstudent(example_model)
 </div>
 
 <div class="column-center">
-### DFITS
+### DFFITS / DFIT
 </div>
 
 <div class="column-left">
 #### Stata
+```
+predict dfits, dfits
+```
 </div>
 
 <div class="column-right">
 #### R
-`dffits()` gets just the DFITS values.
+`dffits()` gets just the DFFITS values.
 ```
 dffits(example_model)
 ```
-`influence.measures()` gets DFITS and other influence measures.
+`influence.measures()` gets DFFITS and other influence measures.
 ```
 influence.measures(example_model)
 ```
@@ -799,7 +821,9 @@ influence.measures(example_model)
 <div class="column-center">
 ### Cook's D
 </div>
-
+```
+predict cooksd, cooksd
+```
 <div class="column-left">
 #### Stata
 </div>
@@ -817,21 +841,24 @@ broom::augment(example_model)
 </div>
 
 <div class="column-center">
-### dfBetas
+### DFBetas
 </div>
 
 <div class="column-left">
 #### Stata
+```
+dfbeta 
+```
 </div>
 
 <div class="column-right">
 #### R
-For DF Beta alone:
+For DFBetas alone:
 ```
 dfbetas(example_model)
 
 ```
-Or DF Beta with other statistics:
+Or DFBetas with other statistics:
 ```
 influence.measures(example_model)
 ```
@@ -843,6 +870,10 @@ influence.measures(example_model)
 
 <div class="column-left">
 #### Stata
+To produce variance inflation factors, just run `vif` after the model.
+```
+vif
+```
 </div>
 
 <div class="column-right">
@@ -859,6 +890,7 @@ car::vif(example_model)
 
 <div class="column-left">
 #### Stata
+Stata has individual functions for these but no comparable function for multiple diagnostic plots. You'd normally want to run them individually anyway.
 </div>
 
 <div class="column-right">
