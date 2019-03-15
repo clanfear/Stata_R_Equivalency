@@ -908,3 +908,31 @@ This produces the following plots (in order):
 * Scale-Location 
 * Residuals vs. Leverage
 </div>
+
+<div class="column-center">
+### Removing/Selecting Cases
+</div>
+
+<div class="column-left">
+#### Stata
+To be added.
+</div>
+
+<div class="column-right">
+#### R
+There are many ways to remove cases in R. You can remove one or more observations by index:
+```
+data_subset <- example_data[-10,]
+data_subset <- example_data[-c(10,25),]
+```
+The first removes the 10th case, the second the 10th and 25th cases. You can also remove cases by criteria:
+```
+data_subset <- example_data[x >= 0, ]
+```
+This would drop any cases for which `x` is less than zero. You can do this in `dplyr` as well:
+```
+data_subset <- example_data %>% 
+   filter(x >= 0)
+```
+You can use any standard logical operators to subset data this way. [See these lecture slides for more detail](https://clanfear.github.io/CSSS508/Lectures/Week3/CSSS508_Week3_dplyr.html#12).
+</div>
