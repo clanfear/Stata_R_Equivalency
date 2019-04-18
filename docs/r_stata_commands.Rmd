@@ -365,7 +365,118 @@ exp(confint(example_model2))
 ```
 </div>
 
+<div class="column-center">
+## Poisson Models
 
+Poisson regression is a generalized linear model for count data with an equal mean and variance. Coefficients are reported in log-counts.
+</div>
+
+<div class="column-left">
+#### Stata
+
+```
+Working on random poisson generation in Stata
+```
+</div>
+
+<div class="column-right">
+#### R
+
+First we generate some count data based on covariates, then we model it.
+
+```
+example_data$y_count <- with(example_data, 
+                             rpois(300, 4 + x + z ))
+example_pois <- glm(y_count ~ x + z, 
+                    family = poisson(link = "log"), 
+                    data = example_data)
+summary(example_pois)
+```
+</div>
+
+<div class="column-center">
+### Count Probabilities for Poisson
+
+We might want the estimated probability of observing a given count for particular values of covariates.
+</div>
+
+<div class="column-left">
+#### Stata
+
+Still working on Stata equivalence.
+</div>
+
+<div class="column-right">
+#### R
+
+In R, we can do this with `predict()` and the Poisson probability density function `dpois()`.
+ 
+```
+pred_pois <- predict(example_pois, 
+                    newdata=data.frame(x=2, z=2))
+prob_pois <- dpois(0:10, pred_pois)
+barplot(prob_pois, names = 0:10)
+```
+</div>
+
+<div class="column-center">
+# Model Comparison
+
+This section is sparse but low priority---let me know if additions are needed.
+
+### Likelihood Ratio Test
+</div>
+
+<div class="column-left">
+#### Stata
+
+Stata uses `lrtest` for likelihood ratio tests.
+
+```
+lrtest model1 model2
+```
+This will conduct a likelihood ratio test comparing `model1` to `model2`.
+
+</div>
+
+<div class="column-right">
+#### R
+
+The simplest likelihood ratio test in R is found in the `lmtest` package.
+
+```
+lmtest::lrtest(model1, model2)
+```
+This will conduct a likelihood ratio test comparing `model1` to `model2`.
+
+</div>
+
+<div class="column-center">
+### BIC
+</div>
+
+<div class="column-left">
+#### Stata
+
+Stata uses the postestimation command `estat ic` to obtain BIC values.
+```
+estat ic
+```
+
+</div>
+
+<div class="column-right">
+#### R
+
+```
+BIC(example_model)
+```
+Note you can give `BIC()` multiple models and it will create a table of BIC values.
+
+```
+BIC(model1, model2)
+```
+</div>
 
 <div class="column-center">
 # Plotting
