@@ -1,0 +1,48 @@
+---
+title: "Binary Models"
+author: "Chuck Lanfear"
+date: "4/22/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+<div class="column-center">
+## Logit Models
+
+Logistic regression is a generalized linear model for binomially distributed data which uses a logit function link.
+
+</div>
+
+<div class="column-left">
+#### Stata
+
+Stata offers multiple commands for running a logistic regression. `glm` and `logit` report log-odds coefficients while `logistic` reports odds ratios. `logit` is just a shortcut for `glm` to save typing out the family and link.
+```
+glm x_d1 y z, family(binomial) link(logit)
+logit x_d1 y z
+logistic x_d1 y z
+
+```
+</div>
+
+<div class="column-right">
+#### R
+
+R uses `glm()` for logistic regression.
+```
+example_model2 <- 
+  glm(x_d1 ~ y + z,
+      family = binomial(link = "logit"),
+      data = example_data)
+summary(example_model2)
+```
+
+To obtain odds ratios, exponentiate the log-odds coefficients and/or their confidence intervals:
+```
+exp(coef(example_model2))
+exp(confint(example_model2))
+```
+</div>

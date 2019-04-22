@@ -28,6 +28,13 @@ output:
 
 This document depicts both Stata and R approaches to data management, modeling, and plotting seen in SOC505. They are presented side-by-side to make it easier to move between platforms. It also demonstrates that Stata and R are quite similar in syntax in many cases. R often takes more code to do common tasks than Stata, but can do many things that are not possible in Stata. Both are excellent platforms for quantitative research, though Stata is more common in economics and R is more common in statistics and data science.
 
+
+## Links to Other Pages
+
+* [Binary Models](binary_models.html) (Logit)
+* [Count Models](count_models.html) (Poisson, Negative Binomial)
+
+
 <div class="column-center">
 
 ## Loading Data
@@ -327,97 +334,7 @@ example_data %>% count(x_d1, x_d2)
 ```
 </div>
 
-<div class="column-center">
-## Logit Models
 
-Logistic regression is a generalized linear model for binomially distributed data which uses a logit function link.
-
-</div>
-
-<div class="column-left">
-#### Stata
-
-Stata offers multiple commands for running a logistic regression. `glm` and `logit` report log-odds coefficients while `logistic` reports odds ratios. `logit` is just a shortcut for `glm` to save typing out the family and link.
-```
-glm x_d1 y z, family(binomial) link(logit)
-logit x_d1 y z
-logistic x_d1 y z
-
-```
-</div>
-
-<div class="column-right">
-#### R
-
-R uses `glm()` for logistic regression.
-```
-example_model2 <- 
-  glm(x_d1 ~ y + z,
-      family = binomial(link = "logit"),
-      data = example_data)
-summary(example_model2)
-```
-
-To obtain odds ratios, exponentiate the log-odds coefficients and/or their confidence intervals:
-```
-exp(coef(example_model2))
-exp(confint(example_model2))
-```
-</div>
-
-<div class="column-center">
-## Poisson Models
-
-Poisson regression is a generalized linear model for count data with an equal mean and variance. Coefficients are reported in log-counts.
-</div>
-
-<div class="column-left">
-#### Stata
-
-```
-Working on random poisson generation in Stata
-```
-</div>
-
-<div class="column-right">
-#### R
-
-First we generate some count data based on covariates, then we model it.
-
-```
-example_data$y_count <- with(example_data, 
-                             rpois(300, 4 + x + z ))
-example_pois <- glm(y_count ~ x + z, 
-                    family = poisson(link = "log"), 
-                    data = example_data)
-summary(example_pois)
-```
-</div>
-
-<div class="column-center">
-### Count Probabilities for Poisson
-
-We might want the estimated probability of observing a given count for particular values of covariates.
-</div>
-
-<div class="column-left">
-#### Stata
-
-Still working on Stata equivalence.
-</div>
-
-<div class="column-right">
-#### R
-
-In R, we can do this with `predict()` and the Poisson probability density function `dpois()`.
- 
-```
-pred_pois <- predict(example_pois, 
-                    newdata=data.frame(x=2, z=2))
-prob_pois <- dpois(0:10, pred_pois)
-barplot(prob_pois, names = 0:10)
-```
-</div>
 
 <div class="column-center">
 # Model Comparison

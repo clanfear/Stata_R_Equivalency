@@ -191,7 +191,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">R and Stata Equivalencies</h1>
 <h4 class="author">Chuck Lanfear</h4>
-<h4 class="date">Updated 4:40 PM, April 18, 2019</h4>
+<h4 class="date">Updated 1:10 PM, April 22, 2019</h4>
 
 </div>
 
@@ -214,6 +214,12 @@ $(document).ready(function () {
 }
 </style>
 <p>This document depicts both Stata and R approaches to data management, modeling, and plotting seen in SOC505. They are presented side-by-side to make it easier to move between platforms. It also demonstrates that Stata and R are quite similar in syntax in many cases. R often takes more code to do common tasks than Stata, but can do many things that are not possible in Stata. Both are excellent platforms for quantitative research, though Stata is more common in economics and R is more common in statistics and data science.</p>
+<div id="links-to-other-pages" class="section level2">
+<h2>Links to Other Pages</h2>
+<ul>
+<li><a href="binary_models.html">Binary Models</a> (Logit)</li>
+<li><a href="count_models.html">Count Models</a> (Poisson, Negative Binomial)</li>
+</ul>
 <div class="column-center">
 <h2 id="loading-data">Loading Data</h2>
 <p>Provided a Stata data set (<code>.dta</code> file), we can read it into either Stata or R.</p>
@@ -406,76 +412,18 @@ table(example_data$x_d1, example_data$x_d2)
 example_data %&gt;% count(x_d1, x_d2)</code></pre>
 </div>
 <div class="column-center">
-<h2 id="logit-models">Logit Models</h2>
-<p>Logistic regression is a generalized linear model for binomially distributed data which uses a logit function link.</p>
-</div>
-<div class="column-left">
-<h4 id="stata-9">Stata</h4>
-<p>Stata offers multiple commands for running a logistic regression. <code>glm</code> and <code>logit</code> report log-odds coefficients while <code>logistic</code> reports odds ratios. <code>logit</code> is just a shortcut for <code>glm</code> to save typing out the family and link.</p>
-<pre><code>glm x_d1 y z, family(binomial) link(logit)
-logit x_d1 y z
-logistic x_d1 y z
-</code></pre>
-</div>
-<div class="column-right">
-<h4 id="r-9">R</h4>
-<p>R uses <code>glm()</code> for logistic regression.</p>
-<pre><code>example_model2 &lt;- 
-  glm(x_d1 ~ y + z,
-      family = binomial(link = &quot;logit&quot;),
-      data = example_data)
-summary(example_model2)</code></pre>
-<p>To obtain odds ratios, exponentiate the log-odds coefficients and/or their confidence intervals:</p>
-<pre><code>exp(coef(example_model2))
-exp(confint(example_model2))</code></pre>
-</div>
-<div class="column-center">
-<h2 id="poisson-models">Poisson Models</h2>
-<p>Poisson regression is a generalized linear model for count data with an equal mean and variance. Coefficients are reported in log-counts.</p>
-</div>
-<div class="column-left">
-<h4 id="stata-10">Stata</h4>
-<pre><code>Working on random poisson generation in Stata</code></pre>
-</div>
-<div class="column-right">
-<h4 id="r-10">R</h4>
-<p>First we generate some count data based on covariates, then we model it.</p>
-<pre><code>example_data$y_count &lt;- with(example_data, 
-                             rpois(300, 4 + x + z ))
-example_pois &lt;- glm(y_count ~ x + z, 
-                    family = poisson(link = &quot;log&quot;), 
-                    data = example_data)
-summary(example_pois)</code></pre>
-</div>
-<div class="column-center">
-<h3 id="count-probabilities-for-poisson">Count Probabilities for Poisson</h3>
-<p>We might want the estimated probability of observing a given count for particular values of covariates.</p>
-</div>
-<div class="column-left">
-<h4 id="stata-11">Stata</h4>
-<p>Still working on Stata equivalence.</p>
-</div>
-<div class="column-right">
-<h4 id="r-11">R</h4>
-<p>In R, we can do this with <code>predict()</code> and the Poisson probability density function <code>dpois()</code>.</p>
-<pre><code>pred_pois &lt;- predict(example_pois, 
-                    newdata=data.frame(x=2, z=2))
-prob_pois &lt;- dpois(0:10, pred_pois)
-barplot(prob_pois, names = 0:10)</code></pre>
-</div>
-<div class="column-center">
 <h1 id="model-comparison">Model Comparison</h1>
 <p>This section is sparse but low priority—let me know if additions are needed.</p>
 <h3 id="likelihood-ratio-test">Likelihood Ratio Test</h3>
 </div>
 <div class="column-left">
-<h4 id="stata-12">Stata</h4>
+<h4 id="stata-9">Stata</h4>
 <p>Stata uses <code>lrtest</code> for likelihood ratio tests.</p>
 <pre><code>lrtest model1 model2</code></pre>
 <p>This will conduct a likelihood ratio test comparing <code>model1</code> to <code>model2</code>.</p>
 </div>
 <div class="column-right">
-<h4 id="r-12">R</h4>
+<h4 id="r-9">R</h4>
 <p>The simplest likelihood ratio test in R is found in the <code>lmtest</code> package.</p>
 <pre><code>lmtest::lrtest(model1, model2)</code></pre>
 <p>This will conduct a likelihood ratio test comparing <code>model1</code> to <code>model2</code>.</p>
@@ -484,12 +432,12 @@ barplot(prob_pois, names = 0:10)</code></pre>
 <h3 id="bic">BIC</h3>
 </div>
 <div class="column-left">
-<h4 id="stata-13">Stata</h4>
+<h4 id="stata-10">Stata</h4>
 <p>Stata uses the postestimation command <code>estat ic</code> to obtain BIC values.</p>
 <pre><code>estat ic</code></pre>
 </div>
 <div class="column-right">
-<h4 id="r-13">R</h4>
+<h4 id="r-10">R</h4>
 <pre><code>BIC(example_model)</code></pre>
 <p>Note you can give <code>BIC()</code> multiple models and it will create a table of BIC values.</p>
 <pre><code>BIC(model1, model2)</code></pre>
@@ -499,11 +447,11 @@ barplot(prob_pois, names = 0:10)</code></pre>
 <h2 id="scatterplots">Scatterplots</h2>
 </div>
 <div class="column-left">
-<h4 id="stata-14">Stata</h4>
+<h4 id="stata-11">Stata</h4>
 <pre><code>scatter y x</code></pre>
 </div>
 <div class="column-right">
-<h4 id="r-14">R</h4>
+<h4 id="r-11">R</h4>
 <p>Base R scatterplots use <code>plot()</code> and can take either a formula or <code>x</code> and <code>y</code> arguments:</p>
 <pre><code>plot(example_data$y ~ example_data$x)
 plot(example_data$x, example_data$y)</code></pre>
@@ -516,12 +464,12 @@ plot(example_data$x, example_data$y)</code></pre>
 <p>Often we want to plot regression lines on our scatterplots.</p>
 </div>
 <div class="column-left">
-<h4 id="stata-15">Stata</h4>
+<h4 id="stata-12">Stata</h4>
 <p>We can just draw both the scatter and a linear fit (<code>lfit</code>) at the same time:</p>
 <pre><code>graph twoway ((scatter y x) || (lfit y x))</code></pre>
 </div>
 <div class="column-right">
-<h4 id="r-15">R</h4>
+<h4 id="r-12">R</h4>
 <p>In base R, we draw the scatterplot and add a linear line (<code>abline()</code>):</p>
 <pre><code>plot(example_data$y ~ example_data$x)
 abline(reg=glm(y ~ x, data = example_data))</code></pre>
@@ -536,12 +484,12 @@ abline(reg=glm(y ~ x, data = example_data))</code></pre>
 <p>We may want to put a nonlinear fit line on our plot. This is easy in both Stata and R.</p>
 </div>
 <div class="column-left">
-<h4 id="stata-16">Stata</h4>
+<h4 id="stata-13">Stata</h4>
 <p><code>qfit</code> generates a quadratic fit line.</p>
 <pre><code>graph twoway ((scatter y x) || (qfit y x))</code></pre>
 </div>
 <div class="column-right">
-<h4 id="r-16">R</h4>
+<h4 id="r-13">R</h4>
 <p>Quadratic fits are slightly awkward in base R:</p>
 <pre><code>plot(example_data$y ~ example_data$x)
 curve(predict(glm(y~x, data=example_data), 
@@ -555,7 +503,7 @@ curve(predict(glm(y~x, data=example_data),
 <h2 id="predicted-values">Predicted Values</h2>
 </div>
 <div class="column-left">
-<h4 id="stata-17">Stata</h4>
+<h4 id="stata-14">Stata</h4>
 <p>You can generate predictions as a new variable in your data:</p>
 <pre><code>predict xb pr_vals</code></pre>
 <p>Or get predictions at set values with <code>prvalue</code>. You will need to install <code>prvalue</code> from a package such as <code>spost9_ado</code> using <code>net install spost9_ado.pkg</code></p>
@@ -563,7 +511,7 @@ curve(predict(glm(y~x, data=example_data),
 prvalue , x(y=10 z=-1)</code></pre>
 </div>
 <div class="column-right">
-<h4 id="r-17">R</h4>
+<h4 id="r-14">R</h4>
 <p>R uses the <code>predict()</code> function to generate predicted values.</p>
 <pre><code>predict(example_model2)</code></pre>
 <p>If you want to predict an outcome at specific values of a variable, you need to provide new data. The new data must have a value for every variable on the right hand side of the model. It accepts multiple rows to produce multiple predictions as well.</p>
@@ -579,7 +527,7 @@ predict(example_model2,
 <h2 id="plotting-predictions">Plotting Predictions</h2>
 </div>
 <div class="column-left">
-<h4 id="stata-18">Stata</h4>
+<h4 id="stata-15">Stata</h4>
 <p>Plotting predictions from a model at varying levels of two variables requires multiple <code>prgen</code> (from <code>spost9_ado</code>) calls:</p>
 <pre><code>logit x_d1 y z
 prgen y,from(0) to(8) generate(predval_a) n(30) x(z=-1)
@@ -597,7 +545,7 @@ marginsplot</code></pre>
 <p><code>margins</code> and <code>marginsplot</code> work with <code>glm</code> or <code>logit</code></p>
 </div>
 <div class="column-right">
-<h4 id="r-18">R</h4>
+<h4 id="r-15">R</h4>
 <p><code>ggplot2</code> is well suited to making complex predicted value plots. Here we generate a range of <code>y</code> values from 0 to 8 in increments of 0.25. We do this for <em>each</em> value of z: -1, 0, and 1.</p>
 <pre><code>pr_data &lt;- data.frame(y = rep(seq(0,8,0.25), each=3),
                       z = c(-1,0,1))
@@ -618,14 +566,14 @@ example_model2 %&gt;%
 <h3 id="residual-plots">Residual Plots</h3>
 </div>
 <div class="column-left">
-<h4 id="stata-19">Stata</h4>
+<h4 id="stata-16">Stata</h4>
 <pre><code>glm y x z
 predict yres2, residual
 predict yhat, xb
 scatter yres2 yhat</code></pre>
 </div>
 <div class="column-right">
-<h4 id="r-19">R</h4>
+<h4 id="r-16">R</h4>
 <p>Simple base R method:</p>
 <pre><code>plot(residuals(example_model)~fitted(example_model))
 plot(residuals(example_model)^2~fitted(example_model))</code></pre>
@@ -639,7 +587,7 @@ plot(residuals(example_model)^2~fitted(example_model))</code></pre>
 <h3 id="breusch-pagan-cook-weisburg-tests">Breusch-Pagan / Cook-Weisburg Tests</h3>
 </div>
 <div class="column-left">
-<h4 id="stata-20">Stata</h4>
+<h4 id="stata-17">Stata</h4>
 <p>We can run tests manually.</p>
 <pre><code>glm y x z
 predict yres2, residual
@@ -652,7 +600,7 @@ glm yres2 yhat yhat2</code></pre>
 hettest</code></pre>
 </div>
 <div class="column-right">
-<h4 id="r-20">R</h4>
+<h4 id="r-17">R</h4>
 <p>We can do this manually:</p>
 <pre><code>example_data$yres2 &lt;- residuals(example_model)^2
 glm(yres2 ~ x + z, data=example_data)
@@ -667,11 +615,11 @@ glm(yres2 ~ yhat + yhat2, data=example_data)</code></pre>
 <h3 id="heteroskedasticity-consistent-robust-errors">Heteroskedasticity-Consistent / Robust Errors</h3>
 </div>
 <div class="column-left">
-<h4 id="stata-21">Stata</h4>
+<h4 id="stata-18">Stata</h4>
 <pre><code>glm y x z, family(gauss) link(identity) vce(robust)</code></pre>
 </div>
 <div class="column-right">
-<h4 id="r-21">R</h4>
+<h4 id="r-18">R</h4>
 <p><code>sjstats</code> has a simple wrapper:</p>
 <pre><code>sjstats::robust(example_model)</code></pre>
 <p>Or we can do it with <code>lmtest</code>:</p>
@@ -681,11 +629,11 @@ glm(yres2 ~ yhat + yhat2, data=example_data)</code></pre>
 <h3 id="resampling-bootstrapping">Resampling / Bootstrapping</h3>
 </div>
 <div class="column-left">
-<h4 id="stata-22">Stata</h4>
+<h4 id="stata-19">Stata</h4>
 <pre><code>glm y x z, family(gauss) link(identity) vce(bootstrap, reps(1000))</code></pre>
 </div>
 <div class="column-right">
-<h4 id="r-22">R</h4>
+<h4 id="r-19">R</h4>
 <p>The <code>car</code> package provides a shortcut to <code>boot</code> for easy bootstrapped SEs.</p>
 <pre><code>car::Boot(glm(y ~ x + z, data=example_data))</code></pre>
 <p>We can also use <code>boot</code> directly:</p>
@@ -723,13 +671,13 @@ example_data %&gt;%
 <h3 id="partial-plots">Partial Plots</h3>
 </div>
 <div class="column-left">
-<h4 id="stata-23">Stata</h4>
+<h4 id="stata-20">Stata</h4>
 <p>We’ll create a variable to indicate the case number, then run <code>avplot</code>.</p>
 <pre><code>generate case=_n
 avplots, mlabel(case)</code></pre>
 </div>
 <div class="column-right">
-<h4 id="r-23">R</h4>
+<h4 id="r-20">R</h4>
 <p><code>car</code> has an <code>avPlots()</code> function:</p>
 <pre><code>car::avPlots(example_model)</code></pre>
 <p>Or you can do it manually:</p>
@@ -744,11 +692,11 @@ abline(lm(res_y_z~res_x_z), col=&quot;blue&quot;)</code></pre>
 <h3 id="leverage">Leverage</h3>
 </div>
 <div class="column-left">
-<h4 id="stata-24">Stata</h4>
+<h4 id="stata-21">Stata</h4>
 <pre><code>predict leverage, hat</code></pre>
 </div>
 <div class="column-right">
-<h4 id="r-24">R</h4>
+<h4 id="r-21">R</h4>
 <p><code>hatvalues()</code> produces… hat values.</p>
 <pre><code>hatvalues(example_model)</code></pre>
 <p><code>augment()</code> adds values to the data used to fit the model: <code>.hat</code> is the diagonal of the hat matrix.</p>
@@ -758,22 +706,22 @@ abline(lm(res_y_z~res_x_z), col=&quot;blue&quot;)</code></pre>
 <h3 id="studentized-residuals">Studentized Residuals</h3>
 </div>
 <div class="column-left">
-<h4 id="stata-25">Stata</h4>
+<h4 id="stata-22">Stata</h4>
 <pre><code>predict studentres, rstudent</code></pre>
 </div>
 <div class="column-right">
-<h4 id="r-25">R</h4>
+<h4 id="r-22">R</h4>
 <pre><code>rstudent(example_model)</code></pre>
 </div>
 <div class="column-center">
 <h3 id="dffits-dfit">DFFITS / DFIT</h3>
 </div>
 <div class="column-left">
-<h4 id="stata-26">Stata</h4>
+<h4 id="stata-23">Stata</h4>
 <pre><code>predict dfits, dfits</code></pre>
 </div>
 <div class="column-right">
-<h4 id="r-26">R</h4>
+<h4 id="r-23">R</h4>
 <p><code>dffits()</code> gets just the DFFITS values.</p>
 <pre><code>dffits(example_model)</code></pre>
 <p><code>influence.measures()</code> gets DFFITS and other influence measures.</p>
@@ -783,11 +731,11 @@ abline(lm(res_y_z~res_x_z), col=&quot;blue&quot;)</code></pre>
 <h3 id="cooks-d">Cook’s D</h3>
 </div>
 <div class="column-left">
-<h4 id="stata-27">Stata</h4>
+<h4 id="stata-24">Stata</h4>
 <pre><code>predict cooksd, cooksd</code></pre>
 </div>
 <div class="column-right">
-<h4 id="r-27">R</h4>
+<h4 id="r-24">R</h4>
 <p>For just Cook’s D values:</p>
 <pre><code>cookds.distance(example_model)</code></pre>
 <p>Or <code>augment()</code> can return the data with Cook’s D added for each row.</p>
@@ -797,11 +745,11 @@ abline(lm(res_y_z~res_x_z), col=&quot;blue&quot;)</code></pre>
 <h3 id="dfbetas">DFBetas</h3>
 </div>
 <div class="column-left">
-<h4 id="stata-28">Stata</h4>
+<h4 id="stata-25">Stata</h4>
 <pre><code>dfbeta </code></pre>
 </div>
 <div class="column-right">
-<h4 id="r-28">R</h4>
+<h4 id="r-25">R</h4>
 <p>For DFBetas alone:</p>
 <pre><code>dfbetas(example_model)
 </code></pre>
@@ -812,12 +760,12 @@ abline(lm(res_y_z~res_x_z), col=&quot;blue&quot;)</code></pre>
 <h3 id="vif">VIF</h3>
 </div>
 <div class="column-left">
-<h4 id="stata-29">Stata</h4>
+<h4 id="stata-26">Stata</h4>
 <p>To produce variance inflation factors, just run <code>vif</code> after the model.</p>
 <pre><code>vif</code></pre>
 </div>
 <div class="column-right">
-<h4 id="r-29">R</h4>
+<h4 id="r-26">R</h4>
 <p><code>car</code> has a function for VIFs:</p>
 <pre><code>car::vif(example_model)</code></pre>
 </div>
@@ -825,11 +773,11 @@ abline(lm(res_y_z~res_x_z), col=&quot;blue&quot;)</code></pre>
 <h3 id="diagnostic-plots">Diagnostic Plots</h3>
 </div>
 <div class="column-left">
-<h4 id="stata-30">Stata</h4>
+<h4 id="stata-27">Stata</h4>
 <p>Stata has individual functions for these but no comparable function for multiple diagnostic plots. You’d normally want to run them individually anyway.</p>
 </div>
 <div class="column-right">
-<h4 id="r-30">R</h4>
+<h4 id="r-27">R</h4>
 <p>Just running <code>plot()</code> on an R model will produce a series of diagnostic plots. You must hit <code>ENTER</code> in the console to browse through them.</p>
 <pre><code>plot(example_model)</code></pre>
 <p>This produces the following plots (in order):</p>
@@ -844,11 +792,11 @@ abline(lm(res_y_z~res_x_z), col=&quot;blue&quot;)</code></pre>
 <h3 id="removingselecting-cases">Removing/Selecting Cases</h3>
 </div>
 <div class="column-left">
-<h4 id="stata-31">Stata</h4>
+<h4 id="stata-28">Stata</h4>
 <p>To be added.</p>
 </div>
 <div class="column-right">
-<h4 id="r-31">R</h4>
+<h4 id="r-28">R</h4>
 <p>There are many ways to remove cases in R. You can remove one or more observations by index:</p>
 <pre><code>data_subset &lt;- example_data[-10,]
 data_subset &lt;- example_data[-c(10,25),]</code></pre>
@@ -858,6 +806,7 @@ data_subset &lt;- example_data[-c(10,25),]</code></pre>
 <pre><code>data_subset &lt;- example_data %&gt;% 
    filter(x &gt;= 0)</code></pre>
 <p>You can use any standard logical operators to subset data this way. <a href="https://clanfear.github.io/CSSS508/Lectures/Week3/CSSS508_Week3_dplyr.html#12">See these lecture slides for more detail</a>.</p>
+</div>
 </div>
 
 

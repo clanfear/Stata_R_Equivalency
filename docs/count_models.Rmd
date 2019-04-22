@@ -1,0 +1,136 @@
+---
+title: "Count Models"
+author: "Chuck Lanfear"
+date: "4/22/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+<div class="column-center">
+## Poisson Models
+
+Poisson regression is a generalized linear model for count data with an equal mean and variance. Coefficients are reported in log-counts. These examples assume `y_count` is a count outcome.
+</div>
+
+<div class="column-left">
+#### Stata
+
+There are two options for fitting a Poisson model in Stata: `glm` and `poisson`.
+
+```
+glm y_count x z, family(poisson) link(log)
+poisson y_count x z
+```
+`poisson` offers more postestimation commands.
+
+</div>
+
+<div class="column-right">
+#### R
+
+`glm()` with `family = poisson(link = "log")` fits a Poisson regression.
+
+```
+example_pois <- glm(y_count ~ x + z, 
+                    family = poisson(link = "log"), 
+                    data = example_data)
+summary(example_pois)
+```
+`summary()` produces summary output with standard errors.
+</div>
+
+
+<div class="column-center">
+### Predicted Values for Poisson
+
+We might want the estimated probability of observing a given count for particular values of covariates.
+</div>
+
+<div class="column-left">
+#### Stata
+
+`prvalue` is a postestimation command, so it must be run immediately after a model. `prvalue` will return the predicted rate (mean) count as well as probability of observing particular counts.
+```
+glm y_count x z, family(poisson) link(log)
+prvalue, x(x=2 z=0) maxcnt(8)
+```
+`x()` is used to set values of covariates and `maxcnt()` sets the maximum count for which a probability is returned.
+
+We could also plot the observed distribution of counts versus the predicted probabilities.
+
+```
+glm y_count x z, family(poisson) link(log)
+prcounts counts, max(8) plot
+graph twoway (connected countobeq countval) || (connected countpreq countval)
+```
+This produces a dashed predicted distribution and a solid true distribution from the data.
+
+</div>
+
+<div class="column-right">
+#### R
+
+In R, we can do this with `predict()` and the Poisson probability density function `dpois()`.
+ 
+```
+pred_pois <- predict(example_pois, 
+                    newdata=data.frame(x=2, z=2))
+prob_pois <- dpois(0:10, pred_pois)
+barplot(prob_pois, names = 0:10)
+```
+If we want to compare the predicted distribution to the actual distribution, 
+
+```
+plot(density(fitted(example_pois)), lty="dashed", col="red")
+lines(density(example_data$y_count), col = "blue" )
+```
+</div>
+
+<div class="column-center">
+### Predicted Ranges for Poisson
+
+We might be interested in plotting predicted values across ranges of covariates.
+</div>
+
+<div class="column-left">
+#### Stata
+
+We can use `prgen` to get predicted values given some fixed covariates and multiple values of another covariate.
+```
+prgen z, x(x=0) from(-2) to (4) generate(zc) n(20)
+graph twoway (connected zcp0 zcx) || (connected zcp1 zcx) || (connected zcp2 zcx)
+```
+This produces predicted probabilities of observing a given count (`zcp0` is count=0, `zcp2` is count=2) across values of `z`.
+
+</div>
+
+<div class="column-right">
+#### R
+
+Mimicking Stata's `prgen`-style plot in Base R is a bit bulky. See in-line comments.
+```
+n_vals    <- 20  # number of x-values to plot over
+pr_counts <- 0:3 # counts for which we want probabilities
+# generate predicted means
+lambdas <- 
+  predict(example_pois, 
+          newdata =  
+            data.frame(x = 0,
+                       z = seq(-2, 4, length.out = n_vals)))
+# generate a matrix of predicted probabilities
+pr_values <- 
+  matrix(dpois(rep(pr_counts, each=n_vals),
+               rep(lambdas, length(pr_counts))),
+         ncol=length(pr_counts), byrow=FALSE)
+# plot the matrix
+matplot(pr_values)
+```
+Another potentially useful plot is just the predicted counts across levels of covariates:
+```
+library(ggeffects)
+plot(ggpredict(example_pois, terms="x"))
+```
+</div>
