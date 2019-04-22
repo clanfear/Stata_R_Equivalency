@@ -442,7 +442,8 @@ graph twoway (connected countobeq countval) || (connected countpreq countval)</c
 prob_pois &lt;- dpois(0:10, pred_pois)
 barplot(prob_pois, names = 0:10)</code></pre>
 <p>If we want to compare the predicted distribution to the actual distribution,</p>
-<pre><code>plot(density(fitted(example_pois)), lty=&quot;dashed&quot;, col=&quot;red&quot;)
+<pre><code>plot(density(fitted(example_pois)), 
+     lty=&quot;dashed&quot;, col=&quot;red&quot;)
 lines(density(example_data$y_count), col = &quot;blue&quot; )</code></pre>
 </div>
 <div class="column-center">
@@ -465,8 +466,8 @@ pr_counts &lt;- 0:3 # counts for which we want probabilities
 lambdas &lt;- 
   predict(example_pois, 
           newdata =  
-            data.frame(x = 0,
-                       z = seq(-2, 4, length.out = n_vals)))
+           data.frame(x = 0,
+                      z = seq(-2, 4, length.out=n_vals)))
 # generate a matrix of predicted probabilities
 pr_values &lt;- 
   matrix(dpois(rep(pr_counts, each=n_vals),

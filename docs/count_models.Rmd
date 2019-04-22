@@ -98,7 +98,8 @@ barplot(prob_pois, names = 0:10)
 If we want to compare the predicted distribution to the actual distribution, 
 
 ```
-plot(density(fitted(example_pois)), lty="dashed", col="red")
+plot(density(fitted(example_pois)), 
+     lty="dashed", col="red")
 lines(density(example_data$y_count), col = "blue" )
 ```
 </div>
@@ -132,8 +133,8 @@ pr_counts <- 0:3 # counts for which we want probabilities
 lambdas <- 
   predict(example_pois, 
           newdata =  
-            data.frame(x = 0,
-                       z = seq(-2, 4, length.out = n_vals)))
+           data.frame(x = 0,
+                      z = seq(-2, 4, length.out=n_vals)))
 # generate a matrix of predicted probabilities
 pr_values <- 
   matrix(dpois(rep(pr_counts, each=n_vals),
