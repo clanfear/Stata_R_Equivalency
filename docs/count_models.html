@@ -376,7 +376,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Count Models</h1>
 <h4 class="author">Chuck Lanfear</h4>
-<h4 class="date">Updated 1:25 PM, April 23, 2019</h4>
+<h4 class="date">Updated 2:51 PM, April 23, 2019</h4>
 
 </div>
 
@@ -460,22 +460,43 @@ graph twoway (connected zcp0 zcx) || (connected zcp1 zcx) || (connected zcp2 zcx
 </div>
 <div class="column-right">
 <h4 id="r-2">R</h4>
-<p>Mimicking Stata’s <code>prgen</code>-style plot in Base R is a bit bulky. See in-line comments.</p>
+<p>Mimicking Stata’s <code>prgen</code>-style plot in Base R is a bit bulky. See in-line comments. First, I’ve generated example data here to help:</p>
+<pre><code>mean_vec &lt;- c(&quot;x&quot; = 1.0, &quot;y&quot; = 2.0, &quot;z&quot; = 3.0)
+cov_mat &lt;- rbind(c(1.0, .75, 1.0),
+                 c(.75, 1.5, 0.0),
+                 c(1.0, 0.0, 2.0))
+example_data &lt;- data.frame(MASS::mvrnorm(300,
+                                         mu = mean_vec, 
+                                         Sigma = cov_mat,
+                                         empirical = TRUE))
+example_data$y_count &lt;- with(example_data, rpois(300, 10+x+z))</code></pre>
+<p>Then the actual prediction and plotting:</p>
 <pre><code>n_vals    &lt;- 20  # number of x-values to plot over
-pr_counts &lt;- 0:3 # counts for which we want probabilities
+pr_counts &lt;- c(0,2,5) # counts for which we want probabilities
+z_range   &lt;- round(seq(0, 6, length.out=n_vals),2)
+example_pois &lt;- glm(y_count ~ x + z, 
+                    family = poisson(link = &quot;log&quot;), 
+                    data = example_data)
+
 # generate predicted means
 lambdas &lt;- 
   predict(example_pois, type=&quot;response&quot;,
           newdata =  
-           data.frame(x = 0,
-                      z = seq(-2, 4, length.out=n_vals)))
+            data.frame(x = 0,
+                       z = z_range))
 # generate a matrix of predicted probabilities
+# rownames are value of z, colnames # of counts
 pr_values &lt;- 
   matrix(dpois(rep(pr_counts, each=n_vals),
                rep(lambdas, length(pr_counts))),
-         ncol=length(pr_counts), byrow=FALSE)
+         ncol=length(pr_counts), byrow=FALSE,
+         dimnames = list(z_range, pr_counts))
 # plot the matrix
-matplot(pr_values)</code></pre>
+# plotted number is the count
+# y-axis is probability of that count
+# x-axis is value of z
+matplot(z_range, pr_values,
+        pch = paste0(as.character(pr_counts)))</code></pre>
 <p>Another potentially useful plot is just the predicted counts across levels of covariates:</p>
 <pre><code>library(ggeffects)
 plot(ggpredict(example_pois, terms=&quot;x&quot;))</code></pre>

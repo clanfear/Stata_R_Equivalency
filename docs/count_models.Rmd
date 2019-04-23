@@ -126,24 +126,49 @@ This produces predicted probabilities of observing a given count (`zcp0` is coun
 <div class="column-right">
 #### R
 
-Mimicking Stata's `prgen`-style plot in Base R is a bit bulky. See in-line comments.
+Mimicking Stata's `prgen`-style plot in Base R is a bit bulky. See in-line comments. First, I've generated example data here to help:
+```
+mean_vec <- c("x" = 1.0, "y" = 2.0, "z" = 3.0)
+cov_mat <- rbind(c(1.0, .75, 1.0),
+                 c(.75, 1.5, 0.0),
+                 c(1.0, 0.0, 2.0))
+example_data <- data.frame(MASS::mvrnorm(300,
+                                         mu = mean_vec, 
+                                         Sigma = cov_mat,
+                                         empirical = TRUE))
+example_data$y_count <- with(example_data, rpois(300, 10+x+z))
+```
+
+Then the actual prediction and plotting:
 ```
 n_vals    <- 20  # number of x-values to plot over
-pr_counts <- 0:3 # counts for which we want probabilities
+pr_counts <- c(0,2,5) # counts for which we want probabilities
+z_range   <- round(seq(0, 6, length.out=n_vals),2)
+example_pois <- glm(y_count ~ x + z, 
+                    family = poisson(link = "log"), 
+                    data = example_data)
+
 # generate predicted means
 lambdas <- 
   predict(example_pois, type="response",
           newdata =  
-           data.frame(x = 0,
-                      z = seq(-2, 4, length.out=n_vals)))
+            data.frame(x = 0,
+                       z = z_range))
 # generate a matrix of predicted probabilities
+# rownames are value of z, colnames # of counts
 pr_values <- 
   matrix(dpois(rep(pr_counts, each=n_vals),
                rep(lambdas, length(pr_counts))),
-         ncol=length(pr_counts), byrow=FALSE)
+         ncol=length(pr_counts), byrow=FALSE,
+         dimnames = list(z_range, pr_counts))
 # plot the matrix
-matplot(pr_values)
+# plotted number is the count
+# y-axis is probability of that count
+# x-axis is value of z
+matplot(z_range, pr_values,
+        pch = paste0(as.character(pr_counts)))
 ```
+
 Another potentially useful plot is just the predicted counts across levels of covariates:
 ```
 library(ggeffects)
