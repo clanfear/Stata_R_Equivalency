@@ -376,7 +376,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Count Models</h1>
 <h4 class="author">Chuck Lanfear</h4>
-<h4 class="date">Updated 2:51 PM, April 23, 2019</h4>
+<h4 class="date">Updated 3:39 PM, April 23, 2019</h4>
 
 </div>
 
@@ -472,7 +472,9 @@ example_data &lt;- data.frame(MASS::mvrnorm(300,
 example_data$y_count &lt;- with(example_data, rpois(300, 10+x+z))</code></pre>
 <p>Then the actual prediction and plotting:</p>
 <pre><code>n_vals    &lt;- 20  # number of x-values to plot over
-pr_counts &lt;- c(0,2,5) # counts for which we want probabilities
+pr_counts &lt;- c(9, 12, 15, 18) # counts to get probs for
+# z_range sets the range of a covariate to plot over
+# In seq() the first value is a minimum, second is max
 z_range   &lt;- round(seq(0, 6, length.out=n_vals),2)
 example_pois &lt;- glm(y_count ~ x + z, 
                     family = poisson(link = &quot;log&quot;), 

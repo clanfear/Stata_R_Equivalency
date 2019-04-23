@@ -142,7 +142,9 @@ example_data$y_count <- with(example_data, rpois(300, 10+x+z))
 Then the actual prediction and plotting:
 ```
 n_vals    <- 20  # number of x-values to plot over
-pr_counts <- c(0,2,5) # counts for which we want probabilities
+pr_counts <- c(9, 12, 15, 18) # counts to get probs for
+# z_range sets the range of a covariate to plot over
+# In seq() the first value is a minimum, second is max
 z_range   <- round(seq(0, 6, length.out=n_vals),2)
 example_pois <- glm(y_count ~ x + z, 
                     family = poisson(link = "log"), 
