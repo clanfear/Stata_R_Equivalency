@@ -381,6 +381,23 @@ $(document).ready(function () {
 </div>
 
 
+<style>
+.column-left{
+  float: left;
+  width: 48%;
+  text-align: left;
+}
+.column-right{
+  float: right;
+  width: 48%;
+  text-align: left;
+}
+.column-center{
+  float: right;
+  width: 100%;
+  text-align: left;
+}
+</style>
 <div class="column-center">
 <h2 id="linear-models">Linear Models</h2>
 <p>Modeling commands are very similar between R and Stata. The primary difference is that R argument go inside paranthesis rather than just after the name of the command as in Stata. Stata options come after a comma and are separate from formulae, but all R arguments–including formulae–are treated the same and separated by commas. Default R output is simpler than Stata: use <code>summary()</code> if you want Stata-like output. In Stata, you save model output using <code>estimates store</code> while in R you just assign the model object to a name. Note we specified which data we are using in R: R can have many data sets loaded at the same time!</p>

@@ -5,8 +5,25 @@ date: "4/23/2019"
 output: html_document
 ---
 
-<div class="column-center">
+<style>
+.column-left{
+  float: left;
+  width: 48%;
+  text-align: left;
+}
+.column-right{
+  float: right;
+  width: 48%;
+  text-align: left;
+}
+.column-center{
+  float: right;
+  width: 100%;
+  text-align: left;
+}
+</style>
 
+<div class="column-center">
 ## Linear Hypotheses
 
 Linear hypotheses are used to test restrictions on models (e.g. that a coefficient is zero or equal to another).
