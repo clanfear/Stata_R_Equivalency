@@ -376,7 +376,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Count Models</h1>
 <h4 class="author">Chuck Lanfear</h4>
-<h4 class="date">Updated 4:11 PM, April 23, 2019</h4>
+<h4 class="date">Updated 4:23 PM, April 23, 2019</h4>
 
 </div>
 
@@ -419,11 +419,28 @@ summary(example_pois)</code></pre>
 <p><code>summary()</code> produces summary output with standard errors.</p>
 </div>
 <div class="column-center">
-<h3 id="predicted-values-for-poisson">Predicted Values for Poisson</h3>
-<p>We might want the estimated probability of observing a given count for particular values of covariates.</p>
+<h2 id="negative-binomial-models">Negative Binomial Models</h2>
+<p>Negative binomial regression is a generalized linear model for count data with a variance which is a multiplicative factor of the mean (it is overdispersed). Coefficients are reported in log-counts. These examples assume <code>y_count</code> is a count outcome.</p>
 </div>
 <div class="column-left">
 <h4 id="stata-1">Stata</h4>
+<p>We fit a negative binomial regression in Stata using <code>nbreg</code>.</p>
+<pre><code>nbreg y_count x z</code></pre>
+</div>
+<div class="column-right">
+<h4 id="r-1">R</h4>
+<p>The most commonly used negative binomial function in R is in the <code>MASS</code> package. I recommend you <em>do not load the MASS library</em>, but rather just use <code>MASS::glm.nb</code> to call it right out of <code>MASS</code>. This is because <code>MASS</code> has a function called <code>select()</code> in it which will mask over the <code>dplyr</code> one.</p>
+<pre><code>example_nb &lt;- MASS::glm.nb(y_count ~ x + z, 
+                    data = example_data)
+summary(example_nb)</code></pre>
+<p><code>summary()</code> produces summary output with standard errors.</p>
+</div>
+<div class="column-center">
+<h3 id="predicted-values-for-poisson">Predicted Values for Poisson</h3>
+<p>We might want the estimated probability of observing a given count for particular values of covariates. These example use the poisson output but should work equivalently for the negative binomial (at least in R).</p>
+</div>
+<div class="column-left">
+<h4 id="stata-2">Stata</h4>
 <p><code>prvalue</code> is a postestimation command, so it must be run immediately after a model. It requires using <code>poisson</code> instead of <code>glm</code>. <code>prvalue</code> will return the predicted rate (mean) count as well as probability of observing particular counts.</p>
 <pre><code>poisson y_count x z
 prvalue, x(x=2 z=0) maxcnt(8)</code></pre>
@@ -435,7 +452,7 @@ graph twoway (connected countobeq countval) || (connected countpreq countval)</c
 <p>This produces a dashed predicted distribution and a solid true distribution from the data.</p>
 </div>
 <div class="column-right">
-<h4 id="r-1">R</h4>
+<h4 id="r-2">R</h4>
 <p>In R, we can do this with <code>predict()</code> and the Poisson probability density function <code>dpois()</code>.</p>
 <pre><code>pred_pois &lt;- predict(example_pois, type=&quot;response&quot;,
                     newdata=data.frame(x=2, z=2))
@@ -451,7 +468,7 @@ lines(density(example_data$y_count), col = &quot;blue&quot; )</code></pre>
 <p>We might be interested in plotting predicted values across ranges of covariates.</p>
 </div>
 <div class="column-left">
-<h4 id="stata-2">Stata</h4>
+<h4 id="stata-3">Stata</h4>
 <p>We can use <code>prgen</code> to get predicted values given some fixed covariates and multiple values of another covariate.</p>
 <pre><code>poisson y_count x z
 prgen z, x(x=0) from(-2) to (4) generate(zc) n(20)
@@ -459,7 +476,7 @@ graph twoway (connected zcp0 zcx) || (connected zcp1 zcx) || (connected zcp2 zcx
 <p>This produces predicted probabilities of observing a given count (<code>zcp0</code> is count=0, <code>zcp2</code> is count=2) across values of <code>z</code>.</p>
 </div>
 <div class="column-right">
-<h4 id="r-2">R</h4>
+<h4 id="r-3">R</h4>
 <p>Mimicking Stata’s <code>prgen</code>-style plot in Base R is a bit bulky. See in-line comments. First, I’ve generated example data here to help:</p>
 <pre><code>mean_vec &lt;- c(&quot;x&quot; = 1.0, &quot;y&quot; = 2.0, &quot;z&quot; = 3.0)
 cov_mat &lt;- rbind(c(1.0, .75, 1.0),

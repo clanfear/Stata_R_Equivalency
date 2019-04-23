@@ -56,11 +56,40 @@ summary(example_pois)
 `summary()` produces summary output with standard errors.
 </div>
 
+<div class="column-center">
+## Negative Binomial Models
+
+Negative binomial regression is a generalized linear model for count data with a variance which is a multiplicative factor of the mean (it is overdispersed). Coefficients are reported in log-counts. These examples assume `y_count` is a count outcome.
+</div>
+
+<div class="column-left">
+#### Stata
+
+We fit a negative binomial regression in Stata using `nbreg`.
+```
+nbreg y_count x z
+```
+
+</div>
+
+<div class="column-right">
+#### R
+
+The most commonly used negative binomial function in R is in the `MASS` package. I recommend you *do not load the MASS library*, but rather just use `MASS::glm.nb` to call it right out of `MASS`. This is because `MASS` has a function called `select()` in it which will mask over the `dplyr` one.
+
+```
+example_nb <- MASS::glm.nb(y_count ~ x + z, 
+                    data = example_data)
+summary(example_nb)
+```
+`summary()` produces summary output with standard errors.
+</div>
 
 <div class="column-center">
 ### Predicted Values for Poisson
 
-We might want the estimated probability of observing a given count for particular values of covariates.
+We might want the estimated probability of observing a given count for particular values of covariates. 
+These example use the poisson output but should work equivalently for the negative binomial (at least in R).
 </div>
 
 <div class="column-left">
