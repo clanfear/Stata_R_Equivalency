@@ -407,7 +407,7 @@ $(document).ready(function () {
 <p>There are two options for fitting a Poisson model in Stata: <code>glm</code> and <code>poisson</code>.</p>
 <pre><code>glm y_count x z, family(poisson) link(log)
 poisson y_count x z</code></pre>
-<p><code>poisson</code> offers more postestimation commands.</p>
+<p>Results are equivalent but <code>poisson</code> offers more postestimation commands.</p>
 </div>
 <div class="column-right">
 <h4 id="r">R</h4>
@@ -424,12 +424,12 @@ summary(example_pois)</code></pre>
 </div>
 <div class="column-left">
 <h4 id="stata-1">Stata</h4>
-<p><code>prvalue</code> is a postestimation command, so it must be run immediately after a model. <code>prvalue</code> will return the predicted rate (mean) count as well as probability of observing particular counts.</p>
-<pre><code>glm y_count x z, family(poisson) link(log)
+<p><code>prvalue</code> is a postestimation command, so it must be run immediately after a model. It requires using <code>poisson</code> instead of <code>glm</code>. <code>prvalue</code> will return the predicted rate (mean) count as well as probability of observing particular counts.</p>
+<pre><code>poisson y_count x z
 prvalue, x(x=2 z=0) maxcnt(8)</code></pre>
 <p><code>x()</code> is used to set values of covariates and <code>maxcnt()</code> sets the maximum count for which a probability is returned.</p>
 <p>We could also plot the observed distribution of counts versus the predicted probabilities.</p>
-<pre><code>glm y_count x z, family(poisson) link(log)
+<pre><code>poisson y_count x z
 prcounts counts, max(8) plot
 graph twoway (connected countobeq countval) || (connected countpreq countval)</code></pre>
 <p>This produces a dashed predicted distribution and a solid true distribution from the data.</p>
@@ -453,7 +453,8 @@ lines(density(example_data$y_count), col = &quot;blue&quot; )</code></pre>
 <div class="column-left">
 <h4 id="stata-2">Stata</h4>
 <p>We can use <code>prgen</code> to get predicted values given some fixed covariates and multiple values of another covariate.</p>
-<pre><code>prgen z, x(x=0) from(-2) to (4) generate(zc) n(20)
+<pre><code>poisson y_count x z
+prgen z, x(x=0) from(-2) to (4) generate(zc) n(20)
 graph twoway (connected zcp0 zcx) || (connected zcp1 zcx) || (connected zcp2 zcx)</code></pre>
 <p>This produces predicted probabilities of observing a given count (<code>zcp0</code> is count=0, <code>zcp2</code> is count=2) across values of <code>z</code>.</p>
 </div>
