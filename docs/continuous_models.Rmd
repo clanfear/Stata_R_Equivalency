@@ -1,0 +1,40 @@
+---
+title: "Continuous Models"
+author: "Chuck Lanfear"
+date: "4/23/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+<div class="column-center">
+## Linear Models
+
+Modeling commands are very similar between R and Stata. The primary difference is that R argument go inside paranthesis rather than just after the name of the command as in Stata. Stata options come after a comma and are separate from formulae, but all R arguments--including formulae--are treated the same and separated by commas. Default R output is simpler than Stata: use `summary()` if you want Stata-like output. In Stata, you save model output using `estimates store` while in R you just assign the model object to a name. Note we specified which data we are using in R: R can have many data sets loaded at the same time!
+</div>
+
+<div class="column-left">
+#### Stata
+
+```
+glm y x z, ///
+   family(gaussian) link(identity)
+estimates store example_model
+```
+Note in the above examples, a single Stata command can be spread over multiple lines using `///`.
+</div>
+
+<div class="column-right">
+#### R
+
+```
+example_model <- glm(y ~ x + z,
+                     family = gaussian(link = "identity"),
+                     data = example_data)
+summary(example_model)
+```
+ In R, all commands can span multiple lines so long as each line (other than the last) ends in an operator (e.g. `,` as above, but also `+` like in `ggplot2` calls).
+</div>
+

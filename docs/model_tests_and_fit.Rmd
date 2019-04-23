@@ -1,0 +1,439 @@
+---
+title: "Model Tests and Fit"
+author: "Chuck Lanfear"
+date: "4/23/2019"
+output: html_document
+---
+
+<div class="column-center">
+
+## Linear Hypotheses
+
+Linear hypotheses are used to test restrictions on models (e.g. that a coefficient is zero or equal to another).
+</div>
+
+<div class="column-left">
+#### Stata
+
+```
+test x=0
+test x=z
+test x=z=0
+```
+Like most postestimation commands in Stata, linear hypotheses (with `test`) must be conducted immediately after running the model of interest. 
+</div>
+
+<div class="column-right">
+#### R
+
+```
+car::linearHypothesis(example_model, "x=0")
+car::linearHypothesis(example_model, "x=z")
+car::linearHypothesis(example_model, c("x=0", "z=0"))
+```
+In R, they must be run using a saved model object (like `example_model` created above). In R, the `linearHypothesis()` function is found in the `car` package. You can obtain this package using `install.packages("car")`. You can then either use `library(car)` to load the package or run `linearHypothesis()` from car directly--without loading the package--using `car::linearHypothesis()` as below.
+</div>
+
+<div class="column-center">
+## Residuals
+
+We often want to obtain residuals to check model fit or produce plots where we have controlled for covariates.  
+</div>
+
+
+
+<div class="column-left">
+#### Stata
+
+```
+predict residual_y_xz, deviance // GLM uses deviance 
+predict residual_y_xz, residual // OLS uses residual
+```
+Obtaining residuals is a postestimation command in Stata, which must be run immediately after a model.
+</div>
+
+<div class="column-right">
+#### R
+
+```
+residual_y_xz <- residuals(example_model)
+example_data$residual_y_xz <- residuals(example_model)
+```
+In R, we run the command on a saved model object. If you want to save the residuals to the original data, you can just assign them as a column.
+</div>
+
+
+<div class="column-center">
+# Model Comparison
+
+This section is sparse but low priority---let me know if additions are needed.
+
+### Likelihood Ratio Test
+</div>
+
+<div class="column-left">
+#### Stata
+
+Stata uses `lrtest` for likelihood ratio tests.
+
+```
+lrtest model1 model2
+```
+This will conduct a likelihood ratio test comparing `model1` to `model2`.
+
+</div>
+
+<div class="column-right">
+#### R
+
+The simplest likelihood ratio test in R is found in the `lmtest` package.
+
+```
+lmtest::lrtest(model1, model2)
+```
+This will conduct a likelihood ratio test comparing `model1` to `model2`.
+
+</div>
+
+<div class="column-center">
+### BIC
+</div>
+
+<div class="column-left">
+#### Stata
+
+Stata uses the postestimation command `estat ic` to obtain BIC values.
+```
+estat ic
+```
+
+</div>
+
+<div class="column-right">
+#### R
+
+```
+BIC(example_model)
+```
+Note you can give `BIC()` multiple models and it will create a table of BIC values.
+
+```
+BIC(model1, model2)
+```
+</div>
+
+
+<div class="column-center">
+### Breusch-Pagan / Cook-Weisburg Tests
+</div>
+
+<div class="column-left">
+#### Stata
+
+We can run tests manually.
+```
+glm y x z
+predict yres2, residual
+
+glm yres2 x z family(gauss) link(identity)
+test x=z=0
+glm yres2 yhat yhat2
+```
+
+Or use `hettest` after an OLS run using `regress`.
+```
+reg y x z
+hettest
+```
+</div>
+
+<div class="column-right">
+#### R
+
+We can do this manually:
+```
+example_data$yres2 <- residuals(example_model)^2
+glm(yres2 ~ x + z, data=example_data)
+
+example_data$yhat <- fitted(example_model)
+example_data$yhat2 <- fitted(example_model)^2
+glm(yres2 ~ yhat + yhat2, data=example_data)
+```
+
+Or `lmtest` contains a Breusch-Pagan test:
+```
+lmtest::bptest(example_model)
+```
+</div>
+
+<div class="column-center">
+### Heteroskedasticity-Consistent / Robust Errors
+</div>
+
+<div class="column-left">
+#### Stata
+```
+glm y x z, family(gauss) link(identity) vce(robust)
+```
+</div>
+
+<div class="column-right">
+#### R
+
+`sjstats` has a simple wrapper:
+```
+sjstats::robust(example_model)
+```
+
+Or we can do it with `lmtest`:
+```
+lmtest::coeftest(example_model, vcov = vcovHC)
+```
+</div>
+
+<div class="column-center">
+### Resampling / Bootstrapping
+
+</div>
+
+<div class="column-left">
+#### Stata
+
+```
+glm y x z, family(gauss) link(identity) vce(bootstrap, reps(1000))
+```
+</div>
+
+<div class="column-right">
+#### R
+
+The `car` package provides a shortcut to `boot` for easy bootstrapped SEs.
+```
+car::Boot(glm(y ~ x + z, data=example_data))
+```
+
+We can also use `boot` directly:
+```
+library(boot)
+
+boot_glm <- function(d,indices) {  
+  d <- d[indices,]  
+  fit <- glm(y ~ x + z, data = d)  
+  return(coef(fit))  
+}
+boot(data = example_data, 
+     statistic = boot_glm, 
+     R = 1000) 
+```
+
+Or we do it manually using modern tidyverse commands:
+```
+library(dplyr)
+library(broom)
+library(rsample)
+library(tidyr)
+library(purrr)
+
+example_data %>% 
+  bootstraps(times=1000) %>% 
+  mutate(model = map(splits, 
+                     function(x) glm(y ~ x + z, data=x)),
+         coef_info = map(model, tidy)) %>% 
+  unnest(coef_info) %>% 
+  group_by(term) %>%
+  summarize(pe = mean(estimate),
+            se = sd(estimate),
+            low =  quantile(estimate, .025),
+            high = quantile(estimate, .975))
+```
+</div>
+
+
+<div class="column-center">
+## Model Diagnostics
+
+### Partial Plots
+</div>
+
+<div class="column-left">
+#### Stata
+
+We'll create a variable to indicate the case number, then run `avplot`.
+```
+generate case=_n
+avplots, mlabel(case)
+```
+</div>
+
+<div class="column-right">
+#### R
+`car` has an `avPlots()` function:
+```
+car::avPlots(example_model)
+```
+Or you can do it manually:
+```
+example_data$case <- 1:nrow(example_data)
+res_x_z <- residuals(glm(x~z, data=example_data))
+res_y_z <- residuals(glm(y~z, data=example_data)) 
+plot(res_y_z~res_x_z)
+text(res_x_z, res_y_z, labels=example_data$case)
+abline(lm(res_y_z~res_x_z), col="blue")
+```
+</div>
+
+<div class="column-center">
+### Leverage
+</div>
+
+<div class="column-left">
+#### Stata
+```
+predict leverage, hat
+```
+</div>
+
+<div class="column-right">
+#### R
+
+`hatvalues()` produces... hat values.
+```
+hatvalues(example_model)
+```
+
+`augment()` adds values to the data used to fit the model: `.hat` is the diagonal of the hat matrix.
+```
+broom::augment(example_model)
+```
+</div>
+
+<div class="column-center">
+### Studentized Residuals
+</div>
+
+<div class="column-left">
+#### Stata
+```
+predict studentres, rstudent
+```
+</div>
+
+<div class="column-right">
+#### R
+```
+rstudent(example_model)
+```
+</div>
+
+<div class="column-center">
+### DFFITS / DFIT
+</div>
+
+<div class="column-left">
+#### Stata
+```
+predict dfits, dfits
+```
+</div>
+
+<div class="column-right">
+#### R
+`dffits()` gets just the DFFITS values.
+```
+dffits(example_model)
+```
+`influence.measures()` gets DFFITS and other influence measures.
+```
+influence.measures(example_model)
+```
+</div>
+
+<div class="column-center">
+### Cook's D
+</div>
+
+<div class="column-left">
+#### Stata
+```
+predict cooksd, cooksd
+```
+</div>
+
+<div class="column-right">
+#### R
+For just Cook's D values:
+```
+cookds.distance(example_model)
+```
+Or `augment()` can return the data with Cook's D added for each row.
+```
+broom::augment(example_model)
+```
+</div>
+
+<div class="column-center">
+### DFBetas
+</div>
+
+<div class="column-left">
+#### Stata
+```
+dfbeta 
+```
+</div>
+
+<div class="column-right">
+#### R
+For DFBetas alone:
+```
+dfbetas(example_model)
+
+```
+Or DFBetas with other statistics:
+```
+influence.measures(example_model)
+```
+</div>
+
+<div class="column-center">
+### VIF
+</div>
+
+<div class="column-left">
+#### Stata
+To produce variance inflation factors, just run `vif` after the model.
+```
+vif
+```
+</div>
+
+<div class="column-right">
+#### R
+`car` has a function for VIFs:
+```
+car::vif(example_model)
+```
+</div>
+
+<div class="column-center">
+### Diagnostic Plots
+</div>
+
+<div class="column-left">
+#### Stata
+Stata has individual functions for these but no comparable function for multiple diagnostic plots. You'd normally want to run them individually anyway.
+</div>
+
+<div class="column-right">
+#### R
+Just running `plot()` on an R model will produce a series of diagnostic plots. You must hit `ENTER` in the console to browse through them.
+```
+plot(example_model)
+```
+This produces the following plots (in order):
+
+* Residuals vs fitted values
+* Q-Q Plot
+* Scale-Location 
+* Residuals vs. Leverage
+</div>
