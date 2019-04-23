@@ -155,9 +155,7 @@ example_pois <- glm(y_count ~ x + z,
 # generate predicted means
 lambdas <- 
   predict(example_pois, type="response",
-          newdata =  
-            data.frame(x = 0,
-                       z = z_range))
+          newdata = data.frame(x = 0, z = z_range))
 ```
 Then plotting...
 
