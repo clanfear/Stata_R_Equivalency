@@ -376,7 +376,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Count Models</h1>
 <h4 class="author">Chuck Lanfear</h4>
-<h4 class="date">Updated 4:43 PM, April 23, 2019</h4>
+<h4 class="date">Updated 4:45 PM, April 23, 2019</h4>
 
 </div>
 
@@ -457,7 +457,7 @@ graph twoway (connected countobeq countval) || (connected countpreq countval)</c
 <pre><code>pred_pois &lt;- predict(example_pois, type=&quot;response&quot;,
                     newdata=data.frame(x=2, z=2))
 count_range &lt;- 0:10
-prob_pois &lt;- dpois(count_range, pred_pois)
+prob_pois   &lt;- dpois(count_range, pred_pois)
 barplot(prob_pois, names = count_range)</code></pre>
 <p>If we want to compare the predicted distribution to the actual distribution,</p>
 <pre><code>plot(density(fitted(example_pois)), 

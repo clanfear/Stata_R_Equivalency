@@ -122,7 +122,7 @@ In R, we can do this with `predict()` and the Poisson probability density functi
 pred_pois <- predict(example_pois, type="response",
                     newdata=data.frame(x=2, z=2))
 count_range <- 0:10
-prob_pois <- dpois(count_range, pred_pois)
+prob_pois   <- dpois(count_range, pred_pois)
 barplot(prob_pois, names = count_range)
 ```
 If we want to compare the predicted distribution to the actual distribution, 
