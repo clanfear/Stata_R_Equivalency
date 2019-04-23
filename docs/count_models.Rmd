@@ -86,7 +86,7 @@ summary(example_nb)
 </div>
 
 <div class="column-center">
-### Predicted Values for Poisson
+## Predicted Values for Poisson
 
 We might want the estimated probability of observing a given count for particular values of covariates. 
 These example use the poisson output but should work equivalently for the negative binomial (at least in R).
@@ -134,7 +134,7 @@ lines(density(example_data$y_count), col = "blue" )
 </div>
 
 <div class="column-center">
-### Predicted Ranges for Poisson
+## Predicted Ranges for Poisson
 
 We might be interested in plotting predicted values across ranges of covariates.
 </div>
