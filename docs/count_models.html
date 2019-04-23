@@ -376,7 +376,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Count Models</h1>
 <h4 class="author">Chuck Lanfear</h4>
-<h4 class="date">Updated 11:51 AM, April 23, 2019</h4>
+<h4 class="date">Updated 1:25 PM, April 23, 2019</h4>
 
 </div>
 
@@ -437,7 +437,7 @@ graph twoway (connected countobeq countval) || (connected countpreq countval)</c
 <div class="column-right">
 <h4 id="r-1">R</h4>
 <p>In R, we can do this with <code>predict()</code> and the Poisson probability density function <code>dpois()</code>.</p>
-<pre><code>pred_pois &lt;- predict(example_pois, 
+<pre><code>pred_pois &lt;- predict(example_pois, type=&quot;response&quot;,
                     newdata=data.frame(x=2, z=2))
 prob_pois &lt;- dpois(0:10, pred_pois)
 barplot(prob_pois, names = 0:10)</code></pre>
@@ -465,7 +465,7 @@ graph twoway (connected zcp0 zcx) || (connected zcp1 zcx) || (connected zcp2 zcx
 pr_counts &lt;- 0:3 # counts for which we want probabilities
 # generate predicted means
 lambdas &lt;- 
-  predict(example_pois, 
+  predict(example_pois, type=&quot;response&quot;,
           newdata =  
            data.frame(x = 0,
                       z = seq(-2, 4, length.out=n_vals)))

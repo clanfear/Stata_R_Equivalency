@@ -90,7 +90,7 @@ This produces a dashed predicted distribution and a solid true distribution from
 In R, we can do this with `predict()` and the Poisson probability density function `dpois()`.
  
 ```
-pred_pois <- predict(example_pois, 
+pred_pois <- predict(example_pois, type="response",
                     newdata=data.frame(x=2, z=2))
 prob_pois <- dpois(0:10, pred_pois)
 barplot(prob_pois, names = 0:10)
@@ -132,7 +132,7 @@ n_vals    <- 20  # number of x-values to plot over
 pr_counts <- 0:3 # counts for which we want probabilities
 # generate predicted means
 lambdas <- 
-  predict(example_pois, 
+  predict(example_pois, type="response",
           newdata =  
            data.frame(x = 0,
                       z = seq(-2, 4, length.out=n_vals)))
