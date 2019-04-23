@@ -168,7 +168,9 @@ pr_values <-
 # y-axis is probability of that count
 # x-axis is value of z
 matplot(z_range, pr_values,
-        pch = paste0(as.character(pr_counts)))
+        pch = pr_counts)
+legend(x = min(z_range), y = max(pr_values),
+       legend = pr_counts, pch = pr_counts)
 ```
 
 Another potentially useful plot is just the predicted counts across levels of covariates:

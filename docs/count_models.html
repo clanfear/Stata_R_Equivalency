@@ -376,7 +376,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Count Models</h1>
 <h4 class="author">Chuck Lanfear</h4>
-<h4 class="date">Updated 3:39 PM, April 23, 2019</h4>
+<h4 class="date">Updated 3:50 PM, April 23, 2019</h4>
 
 </div>
 
@@ -498,7 +498,9 @@ pr_values &lt;-
 # y-axis is probability of that count
 # x-axis is value of z
 matplot(z_range, pr_values,
-        pch = paste0(as.character(pr_counts)))</code></pre>
+        pch = pr_counts)
+legend(x = min(z_range), y = max(pr_values),
+       legend = pr_counts, pch = pr_counts)</code></pre>
 <p>Another potentially useful plot is just the predicted counts across levels of covariates:</p>
 <pre><code>library(ggeffects)
 plot(ggpredict(example_pois, terms=&quot;x&quot;))</code></pre>
