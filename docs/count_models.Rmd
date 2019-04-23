@@ -132,11 +132,13 @@ mean_vec <- c("x" = 1.0, "y" = 2.0, "z" = 3.0)
 cov_mat <- rbind(c(1.0, .75, 1.0),
                  c(.75, 1.5, 0.0),
                  c(1.0, 0.0, 2.0))
-example_data <- data.frame(MASS::mvrnorm(300,
-                                         mu = mean_vec, 
-                                         Sigma = cov_mat,
-                                         empirical = TRUE))
-example_data$y_count <- with(example_data, rpois(300, 10+x+z))
+example_data <- data.frame(
+                  MASS::mvrnorm(300,
+                                mu = mean_vec, 
+                                Sigma = cov_mat,
+                                empirical = TRUE))
+example_data$y_count <- 
+            with(example_data, rpois(300, 10+x+z))
 ```
 
 Setting the values we want to work with and predicting counts:
