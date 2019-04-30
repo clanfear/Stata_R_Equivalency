@@ -376,7 +376,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Count Models</h1>
 <h4 class="author">Chuck Lanfear</h4>
-<h4 class="date">Updated 4:45 PM, April 23, 2019</h4>
+<h4 class="date">Updated 11:32 AM, April 30, 2019</h4>
 
 </div>
 
@@ -398,6 +398,8 @@ $(document).ready(function () {
   text-align: left;
 }
 </style>
+<div id="count-models" class="section level1">
+<h1>Count Models</h1>
 <div class="column-center">
 <h2 id="poisson-models">Poisson Models</h2>
 <p>Poisson regression is a generalized linear model for count data with an equal mean and variance. Coefficients are reported in log-counts. These examples assume <code>y_count</code> is a count outcome.</p>
@@ -435,12 +437,52 @@ summary(example_pois)</code></pre>
 summary(example_nb)</code></pre>
 <p><code>summary()</code> produces summary output with standard errors.</p>
 </div>
+</div>
+<div id="zero-inflated-count-models" class="section level1">
+<h1>Zero-Inflated Count Models</h1>
+<div class="column-center">
+<h2 id="zero-inflated-poisson">Zero-Inflated Poisson</h2>
+<p>Zero-inflated Poisson regression is a generalized linear model for count data with an equal mean and variance but a greater number of zeroes than normal. These zeroes may arise from a different process than the counts: some variables may predict absence of counts while others predict levels if a count is possible. Coefficients are reported in log-counts. These examples assume <code>y_count</code> is a count outcome.</p>
+</div>
+<div class="column-left">
+<h4 id="stata-2">Stata</h4>
+<p><code>zip</code> is used to fit a Zero-Inflated Poisson in Stata. The variables in <code>inflate()</code> are used to predict zero counts.</p>
+<pre><code>zip y_count x z, inflate(z)</code></pre>
+</div>
+<div class="column-right">
+<h4 id="r-2">R</h4>
+<p>The most commonly used Zero-Inflated Poisson model for R is <code>zeroinfl</code> found in the <code>pscl</code> package. Variables after the bar <code>|</code> are used to predict zero counts. Note this command only works if there are some zero counts.</p>
+<pre><code>example_zip &lt;- 
+  pscl::zeroinfl(y_count ~ x + z | z, 
+                 data = example_data)
+summary(example_zip)</code></pre>
+<p><code>summary()</code> produces summary output with standard errors.</p>
+</div>
+<div class="column-center">
+<h2 id="zero-inflated-negative-binomial">Zero-Inflated Negative Binomial</h2>
+<p>Zero-inflated Negative Binomial regression is a generalized linear model for overdispersed count data with a greater number of zeroes than normal. These zeroes may arise from a different process than the counts: some variables may predict absence of counts while others predict levels if a count is possible. Coefficients are reported in log-counts. These examples assume <code>y_count</code> is a count outcome.</p>
+</div>
+<div class="column-left">
+<h4 id="stata-3">Stata</h4>
+<p><code>zinb</code> is used to fit a Zero-Inflated Negative Binomial in Stata. The variables in <code>inflate()</code> are used to predict zero counts.</p>
+<pre><code>zip y_count x z, inflate(z)</code></pre>
+</div>
+<div class="column-right">
+<h4 id="r-3">R</h4>
+<p>You can fit Zero-Inflated Negative Binomial models in R using the same <code>zeroinfl</code> function for ZI Poisson models found in the <code>pscl</code> package. Just add an argument <code>dist = &quot;negbin&quot;</code>. Variables after the bar <code>|</code> are used to predict zero counts. Note this command only works if there are some zero counts.</p>
+<pre><code>example_zinb &lt;- 
+  pscl::zeroinfl(y_count ~ x + z | z, 
+                 data = example_data, 
+                 dist = &quot;negbin&quot;)
+summary(example_zinb)</code></pre>
+<p><code>summary()</code> produces summary output with standard errors.</p>
+</div>
 <div class="column-center">
 <h2 id="predicted-values-for-poisson">Predicted Values for Poisson</h2>
 <p>We might want the estimated probability of observing a given count for particular values of covariates. These example use the poisson output but should work equivalently for the negative binomial (at least in R).</p>
 </div>
 <div class="column-left">
-<h4 id="stata-2">Stata</h4>
+<h4 id="stata-4">Stata</h4>
 <p><code>prvalue</code> is a postestimation command, so it must be run immediately after a model. It requires using <code>poisson</code> instead of <code>glm</code>. <code>prvalue</code> will return the predicted rate (mean) count as well as probability of observing particular counts.</p>
 <pre><code>poisson y_count x z
 prvalue, x(x=2 z=0) maxcnt(8)</code></pre>
@@ -452,7 +494,7 @@ graph twoway (connected countobeq countval) || (connected countpreq countval)</c
 <p>This produces a dashed predicted distribution and a solid true distribution from the data.</p>
 </div>
 <div class="column-right">
-<h4 id="r-2">R</h4>
+<h4 id="r-4">R</h4>
 <p>In R, we can do this with <code>predict()</code> and the Poisson probability density function <code>dpois()</code>.</p>
 <pre><code>pred_pois &lt;- predict(example_pois, type=&quot;response&quot;,
                     newdata=data.frame(x=2, z=2))
@@ -469,7 +511,7 @@ lines(density(example_data$y_count), col = &quot;blue&quot; )</code></pre>
 <p>We might be interested in plotting predicted values across ranges of covariates.</p>
 </div>
 <div class="column-left">
-<h4 id="stata-3">Stata</h4>
+<h4 id="stata-5">Stata</h4>
 <p>We can use <code>prgen</code> to get predicted values given some fixed covariates and multiple values of another covariate.</p>
 <pre><code>poisson y_count x z
 prgen z, x(x=0) from(-2) to (4) generate(zc) n(20)
@@ -477,7 +519,7 @@ graph twoway (connected zcp0 zcx) || (connected zcp1 zcx) || (connected zcp2 zcx
 <p>This produces predicted probabilities of observing a given count (<code>zcp0</code> is count=0, <code>zcp2</code> is count=2) across values of <code>z</code>.</p>
 </div>
 <div class="column-right">
-<h4 id="r-3">R</h4>
+<h4 id="r-5">R</h4>
 <p>Mimicking Stata’s <code>prgen</code>-style plot in Base R is a bit bulky. See in-line comments. First, I’ve generated example data here to help:</p>
 <pre><code>mean_vec &lt;- c(&quot;x&quot; = 1.0, &quot;y&quot; = 2.0, &quot;z&quot; = 3.0)
 cov_mat &lt;- rbind(c(1.0, .75, 1.0),
@@ -534,6 +576,7 @@ legend(x = min(z_range), y = max(pr_values),
 <p>Another potentially useful plot is just the predicted counts across levels of covariates:</p>
 <pre><code>library(ggeffects)
 plot(ggpredict(example_pois, terms=&quot;x&quot;))</code></pre>
+</div>
 </div>
 
 

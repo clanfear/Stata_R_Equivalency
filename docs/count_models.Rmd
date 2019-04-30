@@ -23,6 +23,8 @@ output: html_document
 }
 </style>
 
+# Count Models 
+
 <div class="column-center">
 ## Poisson Models
 
@@ -81,6 +83,71 @@ The most commonly used negative binomial function in R is in the `MASS` package.
 example_nb <- MASS::glm.nb(y_count ~ x + z, 
                     data = example_data)
 summary(example_nb)
+```
+`summary()` produces summary output with standard errors.
+</div>
+
+# Zero-Inflated Count Models
+
+<div class="column-center">
+## Zero-Inflated Poisson
+
+Zero-inflated Poisson regression is a generalized linear model for count data with an equal mean and variance but a greater number of zeroes than normal. These zeroes may arise from a different process than the counts: some variables may predict absence of counts while others predict levels if a count is possible. Coefficients are reported in log-counts. These examples assume `y_count` is a count outcome.
+</div>
+
+<div class="column-left">
+#### Stata
+
+`zip` is used to fit a Zero-Inflated Poisson in Stata. The variables in `inflate()` are used to predict zero counts.
+
+```
+zip y_count x z, inflate(z)
+```
+
+</div>
+
+<div class="column-right">
+#### R
+
+The most commonly used Zero-Inflated Poisson model for R is `zeroinfl` found in the `pscl` package. Variables after the bar `|` are used to predict zero counts. Note this command only works if there are some zero counts.
+
+```
+example_zip <- 
+  pscl::zeroinfl(y_count ~ x + z | z, 
+                 data = example_data)
+summary(example_zip)
+```
+`summary()` produces summary output with standard errors.
+</div>
+
+<div class="column-center">
+## Zero-Inflated Negative Binomial
+
+Zero-inflated Negative Binomial regression is a generalized linear model for overdispersed count data with a greater number of zeroes than normal. These zeroes may arise from a different process than the counts: some variables may predict absence of counts while others predict levels if a count is possible. Coefficients are reported in log-counts. These examples assume `y_count` is a count outcome.
+</div>
+
+<div class="column-left">
+#### Stata
+
+`zinb` is used to fit a Zero-Inflated Negative Binomial in Stata. The variables in `inflate()` are used to predict zero counts.
+
+```
+zip y_count x z, inflate(z)
+```
+
+</div>
+
+<div class="column-right">
+#### R
+
+You can fit Zero-Inflated Negative Binomial models in R using the same `zeroinfl` function for ZI Poisson models found in the `pscl` package. Just add an argument `dist = "negbin"`. Variables after the bar `|` are used to predict zero counts. Note this command only works if there are some zero counts.
+
+```
+example_zinb <- 
+  pscl::zeroinfl(y_count ~ x + z | z, 
+                 data = example_data, 
+                 dist = "negbin")
+summary(example_zinb)
 ```
 `summary()` produces summary output with standard errors.
 </div>
