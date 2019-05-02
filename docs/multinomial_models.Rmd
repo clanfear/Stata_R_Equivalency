@@ -70,5 +70,30 @@ Note you can change the reference category of a factor using `relevel()`. If you
 ```
 example_data$y_mult <-  relevel(example_data$y_mult, ref = "2")
 ```
+</div>
 
+<div class="column-center">
+
+## Plotting Multinomial Models
+</div>
+
+<div class="column-left">
+#### Stata
+
+Forthcoming.
+
+</div>
+
+<div class="column-right">
+#### R
+
+The easiest way to plot multinomial output is to use ggeffects. The code below plots the probability of observing each outcome in a range of `x` from -1 to 1 with `z` held at 0.
+
+```
+library(ggeffects)
+library(dplyr)
+example_mlogit %>% 
+  ggpredict(terms = c("x [-1:1]"), condition = c(z = 0)) %>% 
+  plot()
+```
 </div>

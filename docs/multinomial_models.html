@@ -376,7 +376,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Multinomial Models</h1>
 <h4 class="author">Chuck Lanfear</h4>
-<h4 class="date">Updated 3:54 PM, May 02, 2019</h4>
+<h4 class="date">Updated 4:15 PM, May 02, 2019</h4>
 
 </div>
 
@@ -421,6 +421,22 @@ broom::tidy(example_mlogit, conf.int=TRUE)</code></pre>
 <pre><code>exp(coef(example_mlogit))</code></pre>
 <p>Note you can change the reference category of a factor using <code>relevel()</code>. If your variable is <code>y_mult</code> in <code>example_data</code> and you want the reference category to be <code>2</code> you could use this before rerunning the model:</p>
 <pre><code>example_data$y_mult &lt;-  relevel(example_data$y_mult, ref = &quot;2&quot;)</code></pre>
+</div>
+<div class="column-center">
+<h2 id="plotting-multinomial-models">Plotting Multinomial Models</h2>
+</div>
+<div class="column-left">
+<h4 id="stata-1">Stata</h4>
+<p>Forthcoming.</p>
+</div>
+<div class="column-right">
+<h4 id="r-1">R</h4>
+<p>The easiest way to plot multinomial output is to use ggeffects. The code below plots the probability of observing each outcome in a range of <code>x</code> from -1 to 1 with <code>z</code> held at 0.</p>
+<pre><code>library(ggeffects)
+library(dplyr)
+example_mlogit %&gt;% 
+  ggpredict(terms = c(&quot;x [-1:1]&quot;), condition = c(z = 0)) %&gt;% 
+  plot()</code></pre>
 </div>
 
 
