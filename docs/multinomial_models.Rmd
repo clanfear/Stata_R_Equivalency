@@ -1,0 +1,74 @@
+---
+title: "Multinomial Models"
+author: "Chuck Lanfear"
+date: "Updated `r stringr::str_replace(format(Sys.time(), '%I:%M %p, %B %d, %Y'), '^0','')`"
+output: html_document
+---
+
+<style>
+.column-left{
+  float: left;
+  width: 48%;
+  text-align: left;
+}
+.column-right{
+  float: right;
+  width: 48%;
+  text-align: left;
+}
+.column-center{
+  float: right;
+  width: 100%;
+  text-align: left;
+}
+</style>
+
+<div class="column-center">
+## Multinomial Logit
+
+Multinomial logit is a discrete choice model for modeling the association between covariates and the likelihood of observing a particular categorical outcome. Coefficients are reported in log-odds. One set of coefficients is presented for each outcome category except one. The excluded category is a reference category; all coefficients represent log-odds of the given category being selected *versus the reference category*. These examples assume `y_mult` is a categorical variable taking at least 3 (mutually exclusive) values.
+
+</div>
+
+<div class="column-left">
+#### Stata
+
+Stata uses `mlogit` for multinomial models. The `rrr` option presents results in relative risk ratios.
+
+```
+mlogit y_mult x z
+mlogit y_mult x z, rrr
+```
+
+If you want to change the reference category, the simplest method is to add the `base()` argument. If you wanted the reference category to be the value `2` of `y_mult`, you could use this:
+
+```
+mlogit y_mult x z, base(2)
+```
+
+</div>
+
+<div class="column-right">
+#### R
+
+The most commonly used multinomial regression function in R is `multinom` in the `nnet` package. `y_mult` here should be a factor.
+
+```
+example_mlogit <- multinom(y_mult ~ x + z, data = example_data)
+summary(example_mlogit)
+broom::tidy(example_mlogit, conf.int=TRUE)
+```
+
+`summary()` produces summary output with standard errors. You can also use `broom::tidy()` to get a data frame of coefficients, standard errors, and p-values--and confidence intervals when using `conf.int=TRUE`.
+
+To get relative risk ratios, exponentiate the coefficients:
+```
+exp(coef(example_mlogit))
+```
+
+Note you can change the reference category of a factor using `relevel()`. If your variable is `y_mult` in `example_data` and you want the reference category to be `2` you could use this before rerunning the model:
+```
+example_data$y_mult <-  relevel(example_data$y_mult, ref = "2")
+```
+
+</div>
