@@ -74,6 +74,32 @@ example_data$y_mult <-  relevel(example_data$y_mult, ref = "2")
 
 <div class="column-center">
 
+## Mutinomial Linear Hypotheses
+</div>
+
+<div class="column-left">
+#### Stata
+
+Forthcoming
+</div>
+
+<div class="column-right">
+#### R
+
+Specifying a linear hypothesis from a `multinom()` object is slightly more complicated than for other models. In the hypothesis argument, you must specify the variable as `outcome_level:predictor_var`. The example below is a test that the coefficient for the effect of `x` likelihood of seeing category `2` is the same as the coefficient for `x` on category `3`.
+
+```
+car::linearHypothesis(example_mult, "2:x=3:x")
+```
+In the next example, we test whether both those coefficients are equal to zero.
+```
+car::linearHypothesis(example_mult, 
+                      c("2:x=0", "3:x=0")
+```
+</div>
+
+<div class="column-center">
+
 ## Plotting Multinomial Models
 </div>
 
