@@ -376,7 +376,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Multinomial Models</h1>
 <h4 class="author">Chuck Lanfear</h4>
-<h4 class="date">Updated 4:47 PM, May 02, 2019</h4>
+<h4 class="date">Updated 5:04 PM, May 02, 2019</h4>
 
 </div>
 
@@ -438,14 +438,26 @@ broom::tidy(example_mlogit, conf.int=TRUE)</code></pre>
                       c(&quot;2:x=0&quot;, &quot;3:x=0&quot;)</code></pre>
 </div>
 <div class="column-center">
-<h2 id="plotting-multinomial-models">Plotting Multinomial Models</h2>
+<h2 id="iia-tests">IIA tests</h2>
 </div>
 <div class="column-left">
 <h4 id="stata-2">Stata</h4>
-<p>Forthcoming.</p>
+<p>Stata has a postestimation routine for running IIA tests:</p>
+<pre><code>mlogtest, iia</code></pre>
 </div>
 <div class="column-right">
 <h4 id="r-2">R</h4>
+<p>R does not have a convenient function for running IIA tests on <code>multinom()</code> models–there’s plenty for <code>mlogit()</code> but it is substantially harder to use. I’ll look around and find something applicable for <code>multinom()</code> or write it myself.</p>
+</div>
+<div class="column-center">
+<h2 id="plotting-multinomial-models">Plotting Multinomial Models</h2>
+</div>
+<div class="column-left">
+<h4 id="stata-3">Stata</h4>
+<p>Forthcoming.</p>
+</div>
+<div class="column-right">
+<h4 id="r-3">R</h4>
 <p>The easiest way to plot multinomial output is to use ggeffects. The code below plots the probability of observing each outcome in a range of <code>x</code> from -1 to 1 with <code>z</code> held at 0.</p>
 <pre><code>library(ggeffects)
 library(dplyr)
