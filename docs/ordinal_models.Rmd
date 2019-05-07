@@ -1,0 +1,62 @@
+---
+title: "Ordinal Models"
+author: "Chuck Lanfear"
+date: "Updated `r stringr::str_replace(format(Sys.time(), '%I:%M %p, %B %d, %Y'), '^0','')`"
+output: html_document
+---
+
+<style>
+.column-left{
+  float: left;
+  width: 48%;
+  text-align: left;
+}
+.column-right{
+  float: right;
+  width: 48%;
+  text-align: left;
+}
+.column-center{
+  float: right;
+  width: 100%;
+  text-align: left;
+}
+</style>
+
+<div class="column-center">
+## Ordered Logit
+
+Ordinal logit is a model for modeling the association between covariates and the likelihood of observing a particular level of an ordered categorical outcome. Coefficients are reported in log-odds. These examples assume `y_ord` is a categorical variable taking at least 3 (mutually exclusive) ordered values.
+
+</div>
+
+<div class="column-left">
+#### Stata
+
+Stata uses `ologit` for multinomial models.
+
+```
+ologit y_ord x z
+```
+
+</div>
+
+<div class="column-right">
+#### R
+
+The most commonly used ordinal logistic regression function in R is `polr` in the `MASS` package. `y_ord` here should be an ordered.
+
+```
+example_ologit <- 
+  MASS::polr(y_ord ~ x + z,
+             data=example_data,
+             Hess=TRUE)
+```
+Note `Hess=TRUE` just tells the function to return the hessian matrix required to estimate standard errors.
+
+`summary()` produces summary output with standard errors. You can also use `broom::tidy()` to get a data frame of coefficients, standard errors, and p-values--and confidence intervals when using `conf.int=TRUE`.
+```
+summary(example_ologit)
+broom::tidy(example_ologit)
+```
+</div>

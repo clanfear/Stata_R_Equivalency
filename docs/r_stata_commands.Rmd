@@ -34,6 +34,7 @@ These documents depict both Stata and R approaches to data management, modeling,
 * [Continuous Models](continuous_models.html) (Linear Model)
 * [Binary Models](binary_models.html) (Logit)
 * [Multinomial Models](multinomial_models.html) (Multinomial Logit)
+* [Ordinal Models](ordinal_models.html) (Ordinal Logit)
 * [Count Models](count_models.html) (Poisson, Negative Binomial)
 * [Model Tests and Fit](model_tests_and_fit.html)
 * [Plotting](plotting.html)
