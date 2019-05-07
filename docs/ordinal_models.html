@@ -376,7 +376,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Ordinal Models</h1>
 <h4 class="author">Chuck Lanfear</h4>
-<h4 class="date">Updated 3:36 PM, May 07, 2019</h4>
+<h4 class="date">Updated 4:59 PM, May 07, 2019</h4>
 
 </div>
 
@@ -418,6 +418,27 @@ $(document).ready(function () {
 <p><code>summary()</code> produces summary output with standard errors. You can also use <code>broom::tidy()</code> to get a data frame of coefficients, standard errors, and p-values–and confidence intervals when using <code>conf.int=TRUE</code>.</p>
 <pre><code>summary(example_ologit)
 broom::tidy(example_ologit)</code></pre>
+</div>
+<div class="column-center">
+<h2 id="predictions">Predictions</h2>
+</div>
+<div class="column-left">
+<h4 id="stata-1">Stata</h4>
+<p>Forthcoming</p>
+</div>
+<div class="column-right">
+<h4 id="r-1">R</h4>
+<p>If you want the predicted outcome for each case, you can use <code>predict()</code>.</p>
+<pre><code>predict(example_ologit)</code></pre>
+<p>If you want the probability of falling into each level of the outcome, you can use <code>predict()</code> with <code>type = &quot;probs&quot;</code>.</p>
+<pre><code>predict(example_ologit, type = &quot;probs&quot;)</code></pre>
+<p>Note this will produce a column of probabilities for each level of the outcome.</p>
+<p><code>ggeffects</code> can make predictions over a range of covariates.</p>
+<pre><code>library(ggeffects)
+library(dplyr) # For the pipes
+example_ologit %&gt;%
+  ggpredict(terms = c(&quot;x&quot;,&quot;z&quot;)) %&gt;%
+  plot()</code></pre>
 </div>
 
 

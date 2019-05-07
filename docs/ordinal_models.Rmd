@@ -60,3 +60,41 @@ summary(example_ologit)
 broom::tidy(example_ologit)
 ```
 </div>
+
+<div class="column-center">
+## Predictions
+
+</div>
+
+<div class="column-left">
+#### Stata
+
+Forthcoming
+
+</div>
+
+<div class="column-right">
+#### R
+
+If you want the predicted outcome for each case, you can use `predict()`.
+
+```
+predict(example_ologit)
+```
+
+If you want the probability of falling into each level of the outcome, you can use `predict()` with `type = "probs"`.
+
+```
+predict(example_ologit, type = "probs")
+```
+Note this will produce a column of probabilities for each level of the outcome.
+
+`ggeffects` can make predictions over a range of covariates.
+```
+library(ggeffects)
+library(dplyr) # For the pipes
+example_ologit %>%
+  ggpredict(terms = c("x","z")) %>%
+  plot()
+```
+</div>
