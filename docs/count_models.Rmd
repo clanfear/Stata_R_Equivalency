@@ -192,8 +192,20 @@ count_range <- 0:10
 prob_pois   <- dpois(count_range, pred_pois)
 barplot(prob_pois, names = count_range)
 ```
-If we want to compare the predicted distribution to the actual distribution, 
 
+If we want to compare the predicted distribution to the actual distribution, we could use histograms.
+```
+library(ggplot2)
+ggplot() + 
+  geom_histogram(
+    aes(x=example_data$y_count, stat(density)),
+        bins=8, alpha=0.5, fill="blue") +
+  geom_histogram(
+    aes(x=fitted(example_pois), stat(density)),
+        bins=8, alpha=0.5, fill="red")
+```
+
+Or we could use densities, though note that densities around 0 will be lower than the true probability.
 ```
 plot(density(fitted(example_pois)), 
      lty="dashed", col="red")
