@@ -376,7 +376,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Multinomial Models</h1>
 <h4 class="author">Chuck Lanfear</h4>
-<h4 class="date">Updated 5:04 PM, May 02, 2019</h4>
+<h4 class="date">Updated 2:30 PM, May 08, 2019</h4>
 
 </div>
 
@@ -413,14 +413,16 @@ mlogit y_mult x z, rrr</code></pre>
 <div class="column-right">
 <h4 id="r">R</h4>
 <p>The most commonly used multinomial regression function in R is <code>multinom</code> in the <code>nnet</code> package. <code>y_mult</code> here should be a factor.</p>
-<pre><code>example_mlogit &lt;- multinom(y_mult ~ x + z, data = example_data)
+<pre><code>example_mlogit &lt;- multinom(y_mult ~ x + z,
+                           data = example_data)
 summary(example_mlogit)
 broom::tidy(example_mlogit, conf.int=TRUE)</code></pre>
 <p><code>summary()</code> produces summary output with standard errors. You can also use <code>broom::tidy()</code> to get a data frame of coefficients, standard errors, and p-values–and confidence intervals when using <code>conf.int=TRUE</code>.</p>
 <p>To get relative risk ratios, exponentiate the coefficients:</p>
 <pre><code>exp(coef(example_mlogit))</code></pre>
 <p>Note you can change the reference category of a factor using <code>relevel()</code>. If your variable is <code>y_mult</code> in <code>example_data</code> and you want the reference category to be <code>2</code> you could use this before rerunning the model:</p>
-<pre><code>example_data$y_mult &lt;-  relevel(example_data$y_mult, ref = &quot;2&quot;)</code></pre>
+<pre><code>example_data$y_mult &lt;-  relevel(example_data$y_mult,
+                                ref = &quot;2&quot;)</code></pre>
 </div>
 <div class="column-center">
 <h2 id="mutinomial-linear-hypotheses">Mutinomial Linear Hypotheses</h2>
@@ -432,10 +434,18 @@ broom::tidy(example_mlogit, conf.int=TRUE)</code></pre>
 <div class="column-right">
 <h4 id="r-1">R</h4>
 <p>Specifying a linear hypothesis from a <code>multinom()</code> object is slightly more complicated than for other models. In the hypothesis argument, you must specify the variable as <code>outcome_level:predictor_var</code>. The example below is a test that the coefficient for the effect of <code>x</code> likelihood of seeing category <code>2</code> is the same as the coefficient for <code>x</code> on category <code>3</code>.</p>
-<pre><code>car::linearHypothesis(example_mult, &quot;2:x=3:x&quot;)</code></pre>
+<pre><code>car::linearHypothesis(example_mult, &quot;2:x = 3:x&quot;)</code></pre>
 <p>In the next example, we test whether both those coefficients are equal to zero.</p>
 <pre><code>car::linearHypothesis(example_mult, 
-                      c(&quot;2:x=0&quot;, &quot;3:x=0&quot;)</code></pre>
+                      c(&quot;2:x = 0&quot;, &quot;3:x = 0&quot;)</code></pre>
+<p>Note the number in front is the <em>outcome level</em> (that is, the equation).</p>
+<p>If you wanted to run a linear hypothesis testing whether two levels of a factor variable predictor (<code>x_cat</code>) had equal estimated coefficients, and your model has four outcomes (three equations), you would use this:</p>
+<pre><code>example_mult &lt;- multinom(y_mult ~ x_cat)
+# See here, x_cat is split into dummies by R
+car::linearHypothesis(example_mult, 
+                      c(&quot;2:x_cat1 = 2:x_cat2&quot;,
+                        &quot;3:x_cat1 = 3:x_cat2&quot;,
+                        &quot;4:x_cat1 = 4:x_cat2&quot;)</code></pre>
 </div>
 <div class="column-center">
 <h2 id="iia-tests">IIA tests</h2>
@@ -462,7 +472,8 @@ broom::tidy(example_mlogit, conf.int=TRUE)</code></pre>
 <pre><code>library(ggeffects)
 library(dplyr)
 example_mlogit %&gt;% 
-  ggpredict(terms = c(&quot;x [-1:1]&quot;), condition = c(z = 0)) %&gt;% 
+  ggpredict(terms = c(&quot;x [-1:1]&quot;),
+            condition = c(z = 0)) %&gt;% 
   plot()</code></pre>
 </div>
 
