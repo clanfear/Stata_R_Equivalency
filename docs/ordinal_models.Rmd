@@ -126,5 +126,5 @@ You can conduct a Brant test using `poTest()` in the `car` package.
 car::poTest(example_ologit)
 ```
 
-A model that relaxes the proportional odds assumption--the generalized ordinal logit model--may be run using `oglmx::ologit.reg()`.
+A model that relaxes the proportional odds assumption--the generalized ordinal logit model--may be run using `oglmx::ologit.reg()`. This package is handy because it can also estimate things like heteroskedastic ordinal logit/probit models.
 </div>
