@@ -131,7 +131,7 @@ mlogtest, iia
 <div class="column-right">
 #### R
 
-R does not have a convenient function for running IIA tests on `multinom()` models--there's plenty for `mlogit()` but it is substantially harder to use. I'll look around and find something applicable for `multinom()` or write it myself.
+R does not have a convenient function for running IIA tests on `multinom()` models--there's plenty for `mlogit()` but it is substantially harder to use. IIA tests are [generally considered unreliable tests](https://statisticalhorizons.com/iia), however, so this isn't a real problem.
 
 </div>
 

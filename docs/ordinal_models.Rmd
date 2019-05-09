@@ -69,7 +69,7 @@ broom::tidy(example_ologit)
 <div class="column-left">
 #### Stata
 
-Forthcoming
+No one has requested this yet: Let me know if desired. Mostly redundant with other model types.
 
 </div>
 
@@ -96,5 +96,33 @@ library(dplyr) # For the pipes
 example_ologit %>%
   ggpredict(terms = c("x","z")) %>%
   plot()
+```
+</div>
+
+<div class="column-center">
+## Testing Proportional Odds Assumption
+
+Brant tests are used to test the proportional odds assumption of the ordinal logit model.
+
+</div>
+
+<div class="column-left">
+#### Stata
+
+The Brant test is run using the `brant` postestimation command in Stata.
+
+```
+ologit y_ord x z
+brant
+```
+</div>
+
+<div class="column-right">
+#### R
+
+You can conduct a Brant test using `poTest()` in the `car` package.
+
+```
+car::poTest(example_ologit)
 ```
 </div>
