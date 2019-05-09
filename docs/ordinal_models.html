@@ -376,7 +376,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Ordinal Models</h1>
 <h4 class="author">Chuck Lanfear</h4>
-<h4 class="date">Updated 3:41 PM, May 09, 2019</h4>
+<h4 class="date">Updated 4:47 PM, May 09, 2019</h4>
 
 </div>
 
@@ -441,19 +441,20 @@ example_ologit %&gt;%
   plot()</code></pre>
 </div>
 <div class="column-center">
-<h2 id="testing-proportional-odds-assumption">Testing Proportional Odds Assumption</h2>
-<p>Brant tests are used to test the proportional odds assumption of the ordinal logit model.</p>
+<h2 id="testing-parallel-odds-assumption">Testing Parallel Odds Assumption</h2>
+<p>Brant tests are used to test the parallel odds assumption of the ordinal logit model.</p>
 </div>
 <div class="column-left">
 <h4 id="stata-2">Stata</h4>
-<p>The Brant test is run using the <code>brant</code> postestimation command in Stata.</p>
+<p>You can test this assumption with a Brant test using the <code>brant</code> postestimation command in Stata. This function is in the <code>spost</code> package. The <code>detail</code> option provides more… detail.</p>
 <pre><code>ologit y_ord x z
-brant</code></pre>
+brant, detail</code></pre>
 </div>
 <div class="column-right">
 <h4 id="r-2">R</h4>
 <p>You can conduct a Brant test using <code>poTest()</code> in the <code>car</code> package.</p>
 <pre><code>car::poTest(example_ologit)</code></pre>
+<p>A model that relaxes the proportional odds assumption–the generalized ordinal logit model–may be run using <code>oglmx::ologit.reg()</code>.</p>
 </div>
 
 

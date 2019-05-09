@@ -100,20 +100,20 @@ example_ologit %>%
 </div>
 
 <div class="column-center">
-## Testing Proportional Odds Assumption
+## Testing Parallel Odds Assumption
 
-Brant tests are used to test the proportional odds assumption of the ordinal logit model.
+Brant tests are used to test the parallel odds assumption of the ordinal logit model.
 
 </div>
 
 <div class="column-left">
 #### Stata
 
-The Brant test is run using the `brant` postestimation command in Stata.
+You can test this assumption with a Brant test using the `brant` postestimation command in Stata. This function is in the `spost` package. The `detail` option provides more... detail.
 
 ```
 ologit y_ord x z
-brant
+brant, detail
 ```
 </div>
 
@@ -125,4 +125,6 @@ You can conduct a Brant test using `poTest()` in the `car` package.
 ```
 car::poTest(example_ologit)
 ```
+
+A model that relaxes the proportional odds assumption--the generalized ordinal logit model--may be run using `oglmx::ologit.reg()`.
 </div>
