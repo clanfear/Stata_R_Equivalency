@@ -62,6 +62,31 @@ broom::tidy(example_ologit)
 </div>
 
 <div class="column-center">
+## Generalized Ordinal Models
+
+Generalized ordinal models relax the proportional odds assumption
+</div>
+<div class="column-left">
+#### Stata
+
+`gologit2` is used to fit these models in Stata. Variables with a proportional relationship to the outcome are listed in `pl()`. In the output, proportional variables will be fixed to the same value across all outcome thresholds, while the others will vary between thresholds.
+
+```
+gologit2 z, pl(x)
+```
+</div>
+
+<div class="column-right">
+#### R
+
+Generalized ordinal logit models may be run using `ordinal::clm()`. The argument `nominal =` specifies variables which are *not proportional* to the outcome. These are treated as `nominal` with regard to the outcome. In the output, nominal variable effects will be shown under `Threshold Coefficients` while proportional coefficiens will display under `Coefficients`.
+
+```
+clm(y_ord ~ x, nominal = ~ z, data = example_data)
+```
+</div>
+
+<div class="column-center">
 ## Predictions
 
 </div>
@@ -125,6 +150,5 @@ You can conduct a Brant test using `poTest()` in the `car` package.
 ```
 car::poTest(example_ologit)
 ```
-
-A model that relaxes the proportional odds assumption--the generalized ordinal logit model--may be run using `oglmx::ologit.reg()`. This package is handy because it can also estimate things like heteroskedastic ordinal logit/probit models.
 </div>
+
