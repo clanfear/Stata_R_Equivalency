@@ -44,11 +44,36 @@ Note in the above examples, a single Stata command can be spread over multiple l
 #### R
 
 ```
-example_model <- glm(y ~ x + z,
-                     family = gaussian(link = "identity"),
-                     data = example_data)
+example_model <- 
+  glm(y ~ x + z,
+      family = gaussian(link = "identity"),
+      data = example_data)
 summary(example_model)
 ```
  In R, all commands can span multiple lines so long as each line (other than the last) ends in an operator (e.g. `,` as above, but also `+` like in `ggplot2` calls).
+</div>
+
+<div class="column-center">
+## Difference in Difference Models
+If we assume `x` is a treatment and `time` is a dummy indicating before and after, the linear model diff-in-diff estimators look as follows. These would be identical using GLM instead.
+</div>
+
+<div class="column-left">
+#### Stata
+
+```
+gen x_time = x*time
+regress y x time x_time
+```
+</div>
+
+<div class="column-right">
+#### R
+
+```
+example_did <- lm(y ~ x + time + x*time,
+                   data = example_data)
+summary(example_did)
+```
 </div>
 

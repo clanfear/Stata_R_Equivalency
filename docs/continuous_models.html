@@ -376,7 +376,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Continuous Models</h1>
 <h4 class="author">Chuck Lanfear</h4>
-<h4 class="date">Updated 11:51 AM, April 23, 2019</h4>
+<h4 class="date">Updated 6:58 PM, May 21, 2019</h4>
 
 </div>
 
@@ -411,11 +411,27 @@ estimates store example_model</code></pre>
 </div>
 <div class="column-right">
 <h4 id="r">R</h4>
-<pre><code>example_model &lt;- glm(y ~ x + z,
-                     family = gaussian(link = &quot;identity&quot;),
-                     data = example_data)
+<pre><code>example_model &lt;- 
+  glm(y ~ x + z,
+      family = gaussian(link = &quot;identity&quot;),
+      data = example_data)
 summary(example_model)</code></pre>
 <p>In R, all commands can span multiple lines so long as each line (other than the last) ends in an operator (e.g. <code>,</code> as above, but also <code>+</code> like in <code>ggplot2</code> calls).</p>
+</div>
+<div class="column-center">
+<h2 id="difference-in-difference-models">Difference in Difference Models</h2>
+<p>If we assume <code>x</code> is a treatment and <code>time</code> is a dummy indicating before and after, the linear model diff-in-diff estimators look as follows. These would be identical using GLM instead.</p>
+</div>
+<div class="column-left">
+<h4 id="stata-1">Stata</h4>
+<pre><code>gen x_time = x*time
+regress y x time x_time</code></pre>
+</div>
+<div class="column-right">
+<h4 id="r-1">R</h4>
+<pre><code>example_did &lt;- lm(y ~ x + time + x*time,
+                   data = example_data)
+summary(example_did)</code></pre>
 </div>
 
 
