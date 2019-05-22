@@ -191,7 +191,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">R and Stata Equivalencies</h1>
 <h4 class="author">Chuck Lanfear</h4>
-<h4 class="date">Updated 3:37 PM, May 07, 2019</h4>
+<h4 class="date">Updated 5:01 PM, May 21, 2019</h4>
 
 </div>
 
@@ -346,15 +346,45 @@ example_data$x_d3 &lt;- ifelse(example_data$x_disc==3, 1, 0)</code></pre>
          x_d3 = ifelse(x_disc==3, 3, 0))</code></pre>
 </div>
 <div class="column-center">
-<h2 id="tables">Tables</h2>
+<h2 id="differenced-and-lagged-variables">Differenced and Lagged Variables</h2>
 </div>
 <div class="column-left">
 <h4 id="stata-5">Stata</h4>
+<p>This will generate a lag of <code>x</code> and also a difference.</p>
+<pre><code>gen lag_x = x[_n-1]
+gen diff_x = x - lag_x</code></pre>
+<p>Here is code to get a lag and differenced <code>x</code> for <em>panel data</em> in Stata. Note you must set a grouping variable and a variable indicating the time of the observation.</p>
+<pre><code>xtset group_variable time_variable
+gen lag_x = L.x
+gen diff_x = x - lag_x</code></pre>
+</div>
+<div class="column-right">
+<h4 id="r-5">R</h4>
+<p>Creating a lagged variable or a differenced variable is easy. Note if you are working with <em>panel data</em> or other repeated observations, you must <em>group</em> your data before doing the lag.</p>
+<p>One after the other in base R:</p>
+<pre><code>example_data$lag_x &lt;- lag(x)
+example_data$diff_x &lt;- 
+  example_data$x - example_data$lag_x</code></pre>
+<p>Both at once in <code>dplyr</code>.</p>
+<pre><code>example_data &lt;- example_data %&gt;%
+  mutate(lag_x = lag(x),
+         diff_x = x - lag(x))</code></pre>
+<p>Grouped (for panel data) in <code>dplyr</code>. This assumes you have data <code>sort()</code>ed by ascending time already.</p>
+<pre><code>example_data &lt;- example_data %&gt;%
+  group_by(group_variable) %&gt;%
+  mutate(lag_x = lag(x),
+         diff_x = x - lag(x))</code></pre>
+</div>
+<div class="column-center">
+<h2 id="tables">Tables</h2>
+</div>
+<div class="column-left">
+<h4 id="stata-6">Stata</h4>
 <pre><code>tab x_disc
 tab x_d1 x_d2</code></pre>
 </div>
 <div class="column-right">
-<h4 id="r-5">R</h4>
+<h4 id="r-6">R</h4>
 <p>Base R:</p>
 <pre><code>table(example_data$x_disc)
 table(example_data$x_d1, example_data$x_d2)
@@ -367,7 +397,7 @@ example_data %&gt;% count(x_d1, x_d2)</code></pre>
 <h2 id="predicted-values">Predicted Values</h2>
 </div>
 <div class="column-left">
-<h4 id="stata-6">Stata</h4>
+<h4 id="stata-7">Stata</h4>
 <p>You can generate predictions as a new variable in your data:</p>
 <pre><code>predict xb pr_vals</code></pre>
 <p>Or get predictions at set values with <code>prvalue</code>. You will need to install <code>prvalue</code> from a package such as <code>spost9_ado</code> using <code>net install spost9_ado.pkg</code></p>
@@ -375,7 +405,7 @@ example_data %&gt;% count(x_d1, x_d2)</code></pre>
 prvalue , x(y=10 z=-1)</code></pre>
 </div>
 <div class="column-right">
-<h4 id="r-6">R</h4>
+<h4 id="r-7">R</h4>
 <p>R uses the <code>predict()</code> function to generate predicted values.</p>
 <pre><code>predict(example_model2)</code></pre>
 <p>If you want to predict an outcome at specific values of a variable, you need to provide new data. The new data must have a value for every variable on the right hand side of the model. It accepts multiple rows to produce multiple predictions as well.</p>
@@ -391,11 +421,11 @@ predict(example_model2,
 <h3 id="removingselecting-cases">Removing/Selecting Cases</h3>
 </div>
 <div class="column-left">
-<h4 id="stata-7">Stata</h4>
+<h4 id="stata-8">Stata</h4>
 <p>To be added.</p>
 </div>
 <div class="column-right">
-<h4 id="r-7">R</h4>
+<h4 id="r-8">R</h4>
 <p>There are many ways to remove cases in R. You can remove one or more observations by index:</p>
 <pre><code>data_subset &lt;- example_data[-10,]
 data_subset &lt;- example_data[-c(10,25),]</code></pre>

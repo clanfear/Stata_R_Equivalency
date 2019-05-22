@@ -220,6 +220,56 @@ example_data <- example_data %>%
 </div>
 
 <div class="column-center">
+## Differenced and Lagged Variables
+
+</div>
+
+<div class="column-left">
+#### Stata
+
+This will generate a lag of `x` and also a difference.
+```
+gen lag_x = x[_n-1]
+gen diff_x = x - lag_x
+```
+Here is code to get a lag and differenced `x` for *panel data* in Stata. Note you must set a grouping variable and a variable indicating the time of the observation.
+```
+xtset group_variable time_variable
+gen lag_x = L.x
+gen diff_x = x - lag_x
+```
+</div>
+
+
+<div class="column-right">
+#### R
+
+Creating a lagged variable or a differenced variable is easy. Note if you are working with *panel data* or other repeated observations, you must *group* your data before doing the lag.
+
+One after the other in base R:
+```
+example_data$lag_x <- lag(x)
+example_data$diff_x <- 
+  example_data$x - example_data$lag_x
+```
+Both at once in `dplyr`.
+```
+example_data <- example_data %>%
+  mutate(lag_x = lag(x),
+         diff_x = x - lag(x))
+```
+Grouped (for panel data) in `dplyr`. This assumes you have data `sort()`ed by ascending time already.
+```
+example_data <- example_data %>%
+  group_by(group_variable) %>%
+  mutate(lag_x = lag(x),
+         diff_x = x - lag(x))
+```
+</div>
+
+
+
+<div class="column-center">
 ## Tables
 
 </div>
