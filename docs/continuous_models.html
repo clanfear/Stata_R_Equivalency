@@ -376,7 +376,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Continuous Models</h1>
 <h4 class="author">Chuck Lanfear</h4>
-<h4 class="date">Updated 6:58 PM, May 21, 2019</h4>
+<h4 class="date">Updated 4:39 PM, May 23, 2019</h4>
 
 </div>
 
@@ -432,6 +432,39 @@ regress y x time x_time</code></pre>
 <pre><code>example_did &lt;- lm(y ~ x + time + x*time,
                    data = example_data)
 summary(example_did)</code></pre>
+</div>
+<div class="column-center">
+<h2 id="fixed-effects-models">Fixed Effects Models</h2>
+</div>
+<div class="column-left">
+<h4 id="stata-2">Stata</h4>
+<p>In Stata, you can set your fixed effects IDs first using <code>xtset</code> then when you run a regression on the data, use the <code>fe</code> option.</p>
+<pre><code>xtset id
+xtreg y x z, fe </code></pre>
+</div>
+<div class="column-right">
+<h4 id="r-2">R</h4>
+<p>You can run fixed effects using dummies for each unit. If <code>id</code> is a factor, it will create K-1 dummies in your regression, leading to a fixed effects model.</p>
+<pre><code>lm(y ~ x + z + id, data = your_data)</code></pre>
+<p>You can also run fixed effects using the <code>lfe</code> package. Here <code>id</code> comes after <code>|</code>. Everything after the first <code>|</code> is treated as a fixed effect indicator. Additional bars can be added to specify intstrumental variables and clustered standard errors.</p>
+<pre><code>library(lfe)
+felm(y ~ x + z | id, data = example_data)</code></pre>
+</div>
+<div class="column-center">
+<h2 id="random-effects-models">Random Effects Models</h2>
+</div>
+<div class="column-left">
+<h4 id="stata-3">Stata</h4>
+<p>In Stata, random effects models use the same base syntax as fixed effects, except with an <code>re</code> option.</p>
+<pre><code>xtset id
+xtreg y x z, re </code></pre>
+</div>
+<div class="column-right">
+<h4 id="r-3">R</h4>
+<p>In R, random effects models are usually conducted using the <code>lme4</code> package. The formula has two parts: the main formula (<code>y ~ x + z</code>) and the random effects (<code>(1|id)</code>).</p>
+<pre><code>library(lme4)
+lmer(y ~ x + z + (1|id), data = example_data)</code></pre>
+<p>The number <code>1</code> in front of <code>id</code> here represents a <em>constant</em>. If you take a more advanced course on hierarchical models, youll learn about having <em>random slopes</em> which you can fit by replacing that <code>1</code> with variables.</p>
 </div>
 
 

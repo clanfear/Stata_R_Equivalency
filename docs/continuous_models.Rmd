@@ -77,3 +77,60 @@ summary(example_did)
 ```
 </div>
 
+<div class="column-center">
+## Fixed Effects Models
+</div>
+
+<div class="column-left">
+#### Stata
+
+In Stata, you can set your fixed effects IDs first using `xtset` then when you run a regression on the data, use the `fe` option.
+```
+xtset id
+xtreg y x z, fe 
+```
+</div>
+
+<div class="column-right">
+#### R
+
+You can run fixed effects using dummies for each unit. If `id` is a factor, it will create K-1 dummies in your regression, leading to a fixed effects model.
+
+```
+lm(y ~ x + z + id, data = your_data)
+```
+
+You can also run fixed effects using the `lfe` package. Here `id` comes after `|`. Everything after the first `|` is treated as a fixed effect indicator. Additional bars can be added to specify intstrumental variables and clustered standard errors.
+
+```
+library(lfe)
+felm(y ~ x + z | id, data = example_data)
+```
+</div>
+
+<div class="column-center">
+## Random Effects Models
+</div>
+
+<div class="column-left">
+#### Stata
+
+In Stata, random effects models use the same base syntax as fixed effects, except with an `re` option.
+```
+xtset id
+xtreg y x z, re 
+```
+</div>
+
+<div class="column-right">
+#### R
+
+In R, random effects models are usually conducted using the `lme4` package. The formula has two parts: the main formula (`y ~ x + z`) and the random effects (`(1|id)`).
+
+```
+library(lme4)
+lmer(y ~ x + z + (1|id), data = example_data)
+```
+
+The number `1` in front of `id` here represents a *constant*. If you take a more advanced course on hierarchical models, youll learn about having *random slopes* which you can fit by replacing that `1` with variables.
+</div>
