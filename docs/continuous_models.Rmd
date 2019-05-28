@@ -106,6 +106,21 @@ You can also run fixed effects using the `lfe` package. Here `id` comes after `|
 library(lfe)
 felm(y ~ x + z | id, data = example_data)
 ```
+
+If you want to fit a fixed effects panel model in the econometric style, as described in class,
+you might use the `plm` package. You'll want to use this if you want to run a
+Hausman test between fixed and random effects. Note you'll need to specify *indices*:
+A variable that uniquely identifies the *groups* (here, `"id"`) and that identifies
+the time or unique observations *within* groups (here, `"time"`).
+
+```
+library(plm)
+ex_plm_fe <- plm(y ~ z, index = c("id","time"), 
+                 model = "within",
+                 data = example_data)
+```
+
+Note `model = "twoway"` will give fixed effects on *both indices*. `model = "re"` will give you random effects.
 </div>
 
 <div class="column-center">
@@ -125,7 +140,7 @@ xtreg y x z, re
 <div class="column-right">
 #### R
 
-In R, random effects models are usually conducted using the `lme4` package. The formula has two parts: the main formula (`y ~ x + z`) and the random effects (`(1|id)`).
+In R, random effects models are usually conducted using the `lme4` package. The formula has two parts: the main formula (`y ~ x + z`) and the random effects (`(1|id)`). Note it will report normal parameters as "fixed effects" because coefficients which are the same for all units are called fixed effects outside of econometrics. This can be confusing! They're just normal coefficients.
 
 ```
 library(lme4)
@@ -133,4 +148,50 @@ lmer(y ~ x + z + (1|id), data = example_data)
 ```
 
 The number `1` in front of `id` here represents a *constant*. If you take a more advanced course on hierarchical models, youll learn about having *random slopes* which you can fit by replacing that `1` with variables.
+
+You can also fit random effects models in the econometric style using `plm`. This is the easiest approach if you want to run a Hausman test--outside of econometrics, Hausman tests are a bit uncommon these days.
+
+```
+library(plm)
+ex_plm_re <- plm(y ~ z, index = c("id","time"), 
+                 model = "random",
+                 data = example_data)
+```
+</div>
+
+<div class="column-center">
+## Hausman Tests
+
+Hausman tests allow you to compare the econometric fixed effects model (i.e. dummies for each unit) to the random effects model (i.e. random intercepts for each unit) or a basic model (no dummies or random intercepts).
+</div>
+
+<div class="column-left">
+#### Stata
+
+To do the Hausman test in Stata, you need to store your fied effects model and your random effects model, then compare them with `hausman`.
+
+```
+xtreg y z, fe
+estimates store fixed_model
+xtreg y z, re
+estimates store random_model
+hausman fixed_model random_model
+```
+</div>
+
+<div class="column-right">
+#### R 
+
+The easiest Hausman test to use in R is the one built into `plm`. Like for Stata, you'll fit both models, then give them to `phtest()`.
+
+```
+library(plm)
+ex_plm_fe <- plm(y ~ z, index = c("id","time"), 
+                 model = "within",
+                 data = example_data)
+ex_plm_re <- plm(y ~ z, index = c("id","time"), 
+                 model = "random",
+                 data = example_data)
+phtest(ex_plm_fe, ex_plm_re)
+```
 </div>

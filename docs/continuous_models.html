@@ -376,7 +376,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Continuous Models</h1>
 <h4 class="author">Chuck Lanfear</h4>
-<h4 class="date">Updated 4:39 PM, May 23, 2019</h4>
+<h4 class="date">Updated 4:51 PM, May 28, 2019</h4>
 
 </div>
 
@@ -449,6 +449,12 @@ xtreg y x z, fe </code></pre>
 <p>You can also run fixed effects using the <code>lfe</code> package. Here <code>id</code> comes after <code>|</code>. Everything after the first <code>|</code> is treated as a fixed effect indicator. Additional bars can be added to specify intstrumental variables and clustered standard errors.</p>
 <pre><code>library(lfe)
 felm(y ~ x + z | id, data = example_data)</code></pre>
+<p>If you want to fit a fixed effects panel model in the econometric style, as described in class, you might use the <code>plm</code> package. You’ll want to use this if you want to run a Hausman test between fixed and random effects. Note you’ll need to specify <em>indices</em>: A variable that uniquely identifies the <em>groups</em> (here, <code>&quot;id&quot;</code>) and that identifies the time or unique observations <em>within</em> groups (here, <code>&quot;time&quot;</code>).</p>
+<pre><code>library(plm)
+ex_plm_fe &lt;- plm(y ~ z, index = c(&quot;id&quot;,&quot;time&quot;), 
+                 model = &quot;within&quot;,
+                 data = example_data)</code></pre>
+<p>Note <code>model = &quot;twoway&quot;</code> will give fixed effects on <em>both indices</em>. <code>model = &quot;re&quot;</code> will give you random effects.</p>
 </div>
 <div class="column-center">
 <h2 id="random-effects-models">Random Effects Models</h2>
@@ -461,10 +467,40 @@ xtreg y x z, re </code></pre>
 </div>
 <div class="column-right">
 <h4 id="r-3">R</h4>
-<p>In R, random effects models are usually conducted using the <code>lme4</code> package. The formula has two parts: the main formula (<code>y ~ x + z</code>) and the random effects (<code>(1|id)</code>).</p>
+<p>In R, random effects models are usually conducted using the <code>lme4</code> package. The formula has two parts: the main formula (<code>y ~ x + z</code>) and the random effects (<code>(1|id)</code>). Note it will report normal parameters as “fixed effects” because coefficients which are the same for all units are called fixed effects outside of econometrics. This can be confusing! They’re just normal coefficients.</p>
 <pre><code>library(lme4)
 lmer(y ~ x + z + (1|id), data = example_data)</code></pre>
 <p>The number <code>1</code> in front of <code>id</code> here represents a <em>constant</em>. If you take a more advanced course on hierarchical models, youll learn about having <em>random slopes</em> which you can fit by replacing that <code>1</code> with variables.</p>
+<p>You can also fit random effects models in the econometric style using <code>plm</code>. This is the easiest approach if you want to run a Hausman test–outside of econometrics, Hausman tests are a bit uncommon these days.</p>
+<pre><code>library(plm)
+ex_plm_re &lt;- plm(y ~ z, index = c(&quot;id&quot;,&quot;time&quot;), 
+                 model = &quot;random&quot;,
+                 data = example_data)</code></pre>
+</div>
+<div class="column-center">
+<h2 id="hausman-tests">Hausman Tests</h2>
+<p>Hausman tests allow you to compare the econometric fixed effects model (i.e. dummies for each unit) to the random effects model (i.e. random intercepts for each unit) or a basic model (no dummies or random intercepts).</p>
+</div>
+<div class="column-left">
+<h4 id="stata-4">Stata</h4>
+<p>To do the Hausman test in Stata, you need to store your fied effects model and your random effects model, then compare them with <code>hausman</code>.</p>
+<pre><code>xtreg y z, fe
+estimates store fixed_model
+xtreg y z, re
+estimates store random_model
+hausman fixed_model random_model</code></pre>
+</div>
+<div class="column-right">
+<h4 id="r-4">R</h4>
+<p>The easiest Hausman test to use in R is the one built into <code>plm</code>. Like for Stata, you’ll fit both models, then give them to <code>phtest()</code>.</p>
+<pre><code>library(plm)
+ex_plm_fe &lt;- plm(y ~ z, index = c(&quot;id&quot;,&quot;time&quot;), 
+                 model = &quot;within&quot;,
+                 data = example_data)
+ex_plm_re &lt;- plm(y ~ z, index = c(&quot;id&quot;,&quot;time&quot;), 
+                 model = &quot;random&quot;,
+                 data = example_data)
+phtest(ex_plm_fe, ex_plm_re)</code></pre>
 </div>
 
 
