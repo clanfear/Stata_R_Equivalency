@@ -120,7 +120,7 @@ ex_plm_fe <- plm(y ~ z, index = c("id","time"),
                  data = example_data)
 ```
 
-Note `model = "twoway"` will give fixed effects on *both indices*. `model = "re"` will give you random effects.
+Note `model = "twoway"` will give fixed effects on *both indices*. `model = "random"` will give you random effects.
 </div>
 
 <div class="column-center">
