@@ -120,7 +120,7 @@ ex_plm_fe <- plm(y ~ z, index = c("id","time"),
                  data = example_data)
 ```
 
-Note `model = "twoway"` will give fixed effects on *both indices*. `model = "random"` will give you random effects.
+Note `model = "twoway"` will give fixed effects on *both indices*. `model = "random"` will give you random effects. Also, note that if you want to test constraints on a `plm()` model--such as comparing nested models--`plm()` uses Generalized Least Squares, not maximum likelihood, to fit models so you cannot use a likelihood ratio test. Use `lmtest::waldtest()` instead. 
 </div>
 
 <div class="column-center">

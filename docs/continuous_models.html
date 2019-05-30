@@ -376,7 +376,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Continuous Models</h1>
 <h4 class="author">Chuck Lanfear</h4>
-<h4 class="date">Updated 6:23 PM, May 29, 2019</h4>
+<h4 class="date">Updated 6:30 PM, May 29, 2019</h4>
 
 </div>
 
@@ -454,7 +454,7 @@ felm(y ~ x + z | id, data = example_data)</code></pre>
 ex_plm_fe &lt;- plm(y ~ z, index = c(&quot;id&quot;,&quot;time&quot;), 
                  model = &quot;within&quot;,
                  data = example_data)</code></pre>
-<p>Note <code>model = &quot;twoway&quot;</code> will give fixed effects on <em>both indices</em>. <code>model = &quot;random&quot;</code> will give you random effects.</p>
+<p>Note <code>model = &quot;twoway&quot;</code> will give fixed effects on <em>both indices</em>. <code>model = &quot;random&quot;</code> will give you random effects. Also, note that if you want to test constraints on a <code>plm()</code> model–such as comparing nested models–<code>plm()</code> uses Generalized Least Squares, not maximum likelihood, to fit models so you cannot use a likelihood ratio test. Use <code>lmtest::waldtest()</code> instead.</p>
 </div>
 <div class="column-center">
 <h2 id="random-effects-models">Random Effects Models</h2>
