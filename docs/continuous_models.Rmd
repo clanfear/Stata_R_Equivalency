@@ -155,8 +155,11 @@ You can also fit random effects models in the econometric style using `plm`. Thi
 library(plm)
 ex_plm_re <- plm(y ~ z, index = c("id","time"), 
                  model = "random",
+                 effect = "individual",
                  data = example_data)
 ```
+
+Note you should specifcy `effect = "individual"` in the random effects model so that random effects are applied to the `id` variable but no random or fixed effects are applied to `time`.
 </div>
 
 <div class="column-center">
@@ -191,6 +194,7 @@ ex_plm_fe <- plm(y ~ z, index = c("id","time"),
                  data = example_data)
 ex_plm_re <- plm(y ~ z, index = c("id","time"), 
                  model = "random",
+                 effect = "individual",
                  data = example_data)
 phtest(ex_plm_fe, ex_plm_re)
 ```
