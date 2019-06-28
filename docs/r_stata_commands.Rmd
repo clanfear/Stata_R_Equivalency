@@ -83,7 +83,7 @@ matrix cov_mat=(1.0, .75, 1.0  \ ///
 corr2data x y z, n(300) mean(mean_vec) ///
    cov(cov_mat) cstorage(full) seed(341305)
 ```
-In Stata we create a vector of means (named `m` here) and a matrix of covariances (named `vc`). `corr2data` then generates data with variables named `x`, `y`, and `z` whose means (`mean(m)`) and covariances (`cov(vc)`) match what we provided. We specify the sample size with `n()`.
+In Stata we create a vector of means (named `mean_vec` here) and a matrix of covariances (named `cov_mat`). `corr2data` then generates data with variables named `x`, `y`, and `z` whose means (`mean(mean_vec)`) and covariances (`cov(cov_mat)`) match what we provided. We specify the sample size with `n()`.
 </div>
 
 <div class="column-right">

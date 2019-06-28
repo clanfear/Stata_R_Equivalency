@@ -191,7 +191,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">R and Stata Equivalencies</h1>
 <h4 class="author">Chuck Lanfear</h4>
-<h4 class="date">Updated 5:01 PM, May 21, 2019</h4>
+<h4 class="date">Updated 9:34 AM, June 28, 2019</h4>
 
 </div>
 
@@ -253,7 +253,7 @@ matrix cov_mat=(1.0, .75, 1.0  \ ///
                 1.0, 0.0, 2.0)            
 corr2data x y z, n(300) mean(mean_vec) ///
    cov(cov_mat) cstorage(full) seed(341305)</code></pre>
-<p>In Stata we create a vector of means (named <code>m</code> here) and a matrix of covariances (named <code>vc</code>). <code>corr2data</code> then generates data with variables named <code>x</code>, <code>y</code>, and <code>z</code> whose means (<code>mean(m)</code>) and covariances (<code>cov(vc)</code>) match what we provided. We specify the sample size with <code>n()</code>.</p>
+<p>In Stata we create a vector of means (named <code>mean_vec</code> here) and a matrix of covariances (named <code>cov_mat</code>). <code>corr2data</code> then generates data with variables named <code>x</code>, <code>y</code>, and <code>z</code> whose means (<code>mean(mean_vec)</code>) and covariances (<code>cov(cov_mat)</code>) match what we provided. We specify the sample size with <code>n()</code>.</p>
 </div>
 <div class="column-right">
 <h4 id="r-1">R</h4>
